@@ -1,0 +1,15 @@
+{{ define "signup" }}
+{{template "pagestart" .}}
+<div class="signup">
+    <label>
+        <span>用户名</span>
+        <input type="text" placeholder="邮箱地址">
+    </label>
+    <label>
+        <span>密码</span>
+        <input type="password">
+    </label>
+    <button>提交</button>
+</div>
+{{template "pageend" .}}
+{{ end }}
