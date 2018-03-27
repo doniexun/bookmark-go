@@ -1,13 +1,18 @@
 package main
 
-import "fmt"
-// import "net/http"
-import "github.com/gin-gonic/gin"
-import "github.com/GallenHu/bookmarkgo/common"
-import "github.com/GallenHu/bookmarkgo/routes"
+import (
+	"flag"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/GallenHu/bookmarkgo/common"
+	"github.com/GallenHu/bookmarkgo/routes"
+)
 
 func main() {
-	config := common.LoadConfig("/path/to/conf.json")
+	configPath := flag.String("c", "/etc/bookmarkgo.conf.json", "config file path")
+	flag.Parse() // 执行命令行解析
+
+	config := common.LoadConfig(*configPath)
 	fmt.Println(config.Name)
 
 	router := gin.Default()
