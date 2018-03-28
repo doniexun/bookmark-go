@@ -11,3 +11,6 @@ start:
 glide                               # 安装依赖
 go run main.go -c="`pwd`/conf.json" # -c 指定配置文件路径
 ```
+
+## ref
+https://bulma.io/documentation/form/general/

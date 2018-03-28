@@ -1,15 +1,27 @@
 {{ define "signup" }}
 {{template "pagestart" .}}
-<div class="signup">
-    <label>
-        <span>用户名</span>
-        <input type="text" placeholder="邮箱地址">
-    </label>
-    <label>
-        <span>密码</span>
-        <input type="password">
-    </label>
-    <button>提交</button>
+<div class="section">
+    <div class="container">
+        <div class="field">
+            <div class="control">
+                    <input class="input" type="text" placeholder="邮箱地址">
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <input class="input" type="password" placeholder="密码">
+            </div>
+        </div>
+        <div class="field">
+            <div class="control">
+                <input class="input" type="password" placeholder="重复密码">
+            </div>
+        </div>
+
+        <div class="control">
+            <button class="button is-primary">Submit</button>
+        </div>
+    </div>
 </div>
 {{template "pageend" .}}
 {{ end }}

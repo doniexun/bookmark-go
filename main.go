@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	configPath := flag.String("c", "/etc/bookmarkgo.conf.json", "config file path")
+	configPath := flag.String("c", "./conf.json", "config file path")
 	flag.Parse() // 执行命令行解析
 
 	config := common.LoadConfig(*configPath)
@@ -18,6 +18,7 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
 
+	router.Static("/static", "./static")
 	routes.Register(router)
 
 	router.Run(":8080")
