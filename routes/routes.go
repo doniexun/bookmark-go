@@ -6,6 +6,7 @@ import (
 )
 
 func Register(router *gin.Engine) {
+	// Page
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index", gin.H{
 			"pagename": "main",
@@ -19,4 +20,15 @@ func Register(router *gin.Engine) {
 			"title": "hello world",
 		})
 	})
+
+	// API
+	v1 := router.Group("/api/v1")
+	{
+		v1.POST("/signup", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "pong",
+			})
+		})
+	}
+
 }
