@@ -1,7 +1,0 @@
-{
-    "name": "bookmark-project",
-    "database": {
-        "host": "localhost",
-        "password": "12345"
-    }
-}
