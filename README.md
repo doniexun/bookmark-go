@@ -1,16 +1,14 @@
 # bookmark-go
 
-## Dev
-init database:
-```sh
-go run script/initdb.go
-```
+Restful API to manage bookmarks.
 
-start:
-```sh
-glide                               # 安装依赖
-go run main.go -c="`pwd`/conf.json" # -c 指定配置文件路径
-```
+## Framework
+- gin
+- gorm
 
-## ref
-https://bulma.io/documentation/form/general/
+## Development
+```sh
+go run script/initdb.go # 初始化数据库(仅第一次运行)
+glide install           # 安装依赖
+go run main.go          # -c 指定配置文件路径
+```

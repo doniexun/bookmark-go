@@ -1,15 +1,12 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	// "github.com/gin-gonic/gin"
+	"github.com/GallenHu/bookmarkgo/router"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"msg": "hello world",
-		})
-	})
+	r := router.InitRouter()
+
 	r.Run(":3000") // :8080
 }

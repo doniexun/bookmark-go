@@ -22,3 +22,5 @@ request.token
 /log/
 /vendor/*
 !/vendor/vendor.json
+
+conf/app.ini
