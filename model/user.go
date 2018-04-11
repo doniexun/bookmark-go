@@ -11,6 +11,17 @@ func (User) TableName() string { // 自定义表名
 	return "user"
 }
 
+func ExistUserByMail(mail string) bool {
+	var user User
+	db.Select("id").Where("mail = ?", mail).First(&user)
+
+	if (user.ID > 0) {
+		return true
+	}
+
+	return false
+}
+
 func AddUser(mail string, pwd string) bool {
 	users := User{Mail: mail, Password: pwd}
 	db.Create(&users)

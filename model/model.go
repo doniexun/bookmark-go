@@ -35,7 +35,7 @@ func init() {
 	))
 
 	if err != nil {
-		fmt.Println("gorm open error")
+		fmt.Println("gorm open database error")
 		log.Println(err)
 		os.Exit(1)
 	}

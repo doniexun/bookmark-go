@@ -14,6 +14,7 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/adduser", v1.AddUser)
 		apiv1.GET("/add", v1.AddFolder)
 		apiv1.GET("/test", v1.GetFolders)
+		apiv1.POST("user", v1.Signup)
 	}
 
 	return r
