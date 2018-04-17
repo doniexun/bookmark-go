@@ -11,3 +11,5 @@ import:
   - validation
 - package: github.com/mojocn/base64Captcha
 - package: github.com/golang/freetype
+- package: github.com/go-redis/redis
+  version: ~6.10.2

@@ -1,5 +1,5 @@
-hash: f84fcb94a9ff8f6c692ddda1f26e41c88c27f1ac924ceed74d56198161402286
-updated: 2018-04-12T11:11:26.508022843+08:00
+hash: c864265bd4f1bc195748752121af906ef8e469e02ad72ba8f4eb63d749232daa
+updated: 2018-04-17T17:49:07.246079199+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -14,8 +14,18 @@ imports:
   - render
 - name: github.com/go-ini/ini
   version: 5e9692864e22d02ac79e2fa499cffb00520b4fea
+- name: github.com/go-redis/redis
+  version: 877867d2845fbaf86798befe410b6ceb6f5c29a3
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
+  - internal/singleflight
+  - internal/util
 - name: github.com/go-sql-driver/mysql
-  version: 1a676ac6e4dce68e9303a1800773861350374a9e
+  version: 3287d94d4c6a48a63e16fffaabf27ab20203af2a
 - name: github.com/golang/freetype
   version: e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4
   subpackages:
@@ -45,7 +55,7 @@ imports:
   - font
   - math/fixed
 - name: golang.org/x/sys
-  version: 3b87a42e500a6dc65dae1a55d0b641295971163e
+  version: b126b21c05a91c856b027c16779c12e3bf236954
   subpackages:
   - unix
 - name: google.golang.org/appengine

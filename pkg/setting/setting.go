@@ -17,6 +17,10 @@ var (
 	DbName string
 	DbUser string
 	DbPwd string
+
+	RedisHost string
+	RedisPwd string
+	RedisDb int
 )
 
 func init() {
@@ -38,4 +42,8 @@ func LoadSetting() {
 	DbName = Cfg.Section("database").Key("NAME").MustString("bookmark")
 	DbUser = Cfg.Section("database").Key("USER").MustString("root")
 	DbPwd = Cfg.Section("database").Key("PASSWORD").MustString("123456")
+
+	RedisHost = Cfg.Section("redis").Key("HOST").MustString("127.0.0.1:6379")
+	RedisPwd = Cfg.Section("redis").Key("PASSWORD").MustString("")
+	RedisDb = Cfg.Section("redis").Key("DB").MustInt(0)
 }

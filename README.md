@@ -15,6 +15,14 @@ go run main.go          # -c 指定配置文件路径
 
 ## Usage
 
+Captcha
+```
+GET /api/v1/captcha HTTP/1.1
+Host: 127.0.0.1:3000
+Cache-Control: no-cache
+Postman-Token: 384472ef-36af-212d-631c-ae3912dee06c
+```
+
 Signup
 ```
 POST /api/v1/user HTTP/1.1
