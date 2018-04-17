@@ -1,5 +1,5 @@
-hash: 13095b98a5494a508abafb6cf6f973997d60cd6fdf084aee0afe2b808e436d01
-updated: 2018-04-11T15:30:46.589171712+08:00
+hash: f84fcb94a9ff8f6c692ddda1f26e41c88c27f1ac924ceed74d56198161402286
+updated: 2018-04-12T11:11:26.508022843+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -16,6 +16,11 @@ imports:
   version: 5e9692864e22d02ac79e2fa499cffb00520b4fea
 - name: github.com/go-sql-driver/mysql
   version: 1a676ac6e4dce68e9303a1800773861350374a9e
+- name: github.com/golang/freetype
+  version: e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4
+  subpackages:
+  - raster
+  - truetype
 - name: github.com/golang/protobuf
   version: e09c5db296004fbe3f74490e84dcd62c3c5ddb1b
   subpackages:
@@ -28,10 +33,17 @@ imports:
   version: 04140366298a54a039076d798123ffa108fff46c
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/mojocn/base64Captcha
+  version: 9479fc95fcf65b459b5608cffcec627db12e3fd3
 - name: github.com/ugorji/go
   version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
   subpackages:
   - codec
+- name: golang.org/x/image
+  version: f315e440302883054d0c2bd85486878cb4f8572c
+  subpackages:
+  - font
+  - math/fixed
 - name: golang.org/x/sys
   version: 3b87a42e500a6dc65dae1a55d0b641295971163e
   subpackages:

@@ -1,8 +1,6 @@
-// TODO: 验证码
 package v1
 
 import (
-	"fmt"
 	"log"
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
@@ -13,18 +11,21 @@ import (
 type SingupCommand struct {
 	Mail string `json:"mail"`
 	Password string `json:"password"`
+	Tick string `json:"tick"`
+	Captcha string `json:"captcha"`
 }
 
-func AddUser(c *gin.Context) {
-	model.AddUser("acd@mail.com", "123321")
+// 获取验证码
+func GetCaptcha(c *gin.Context) {
+	capID, capImg := utils.GetCaptcha()
 
-	fmt.Println("add success")
+	data := map[string]string{"capImg": capImg, "capID": capID}
 
 	c.JSON(200, gin.H{
-        "code" : 200,
-        "msg" : "success",
-        "data" : make(map[string]string),
-    })
+		"code" : 200,
+		"msg" : "success",
+		"data" : data,
+	})
 }
 
 func Signup(c *gin.Context) {
@@ -34,8 +35,12 @@ func Signup(c *gin.Context) {
 
 	mail := signupCommand.Mail
 	pwd := signupCommand.Password
+	tick := signupCommand.Tick
+	captcha := signupCommand.Captcha
 
 	valid := validation.Validation{}
+	valid.Required(tick, "tick").Message("tick不能为空")
+	valid.Required(captcha, "captcha").Message("验证码不能为空")
 	valid.Required(mail, "mail").Message("邮箱不能为空")
 	valid.Required(pwd, "password").Message("密码不能为空")
 	valid.Email(mail, "mailValidity").Message("邮箱输入有误")
@@ -53,6 +58,16 @@ func Signup(c *gin.Context) {
 			"data" : errors,
 		})
 
+		return
+	}
+
+	if !utils.VerfiyCaptcha(tick, captcha) {
+		errors = append(errors, "验证码错误")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
 		return
 	}
 

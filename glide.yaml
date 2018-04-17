@@ -9,3 +9,5 @@ import:
   version: ~1.9.2
   subpackages:
   - validation
+- package: github.com/mojocn/base64Captcha
+- package: github.com/golang/freetype
