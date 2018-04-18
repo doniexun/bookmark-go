@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	// runMode := setting.RunMode
 	dbType := setting.DbType
 	dbHost := setting.DbHost
 	dbName := setting.DbName

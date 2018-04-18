@@ -2,6 +2,8 @@ package redis
 
 import (
 	"fmt"
+	"time"
+	"os"
 	"github.com/go-redis/redis"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
@@ -10,14 +12,41 @@ var RedisHost = setting.RedisHost
 var RedisPwd = setting.RedisPwd
 var RedisDb = setting.RedisDb
 
-func SetVal() {
-	fmt.Println(RedisHost)
-	client := redis.NewClient(&redis.Options{
+var client *redis.Client
+
+func init() {
+	client = redis.NewClient(&redis.Options{
 		Addr:     RedisHost,
 		Password: RedisPwd,
 		DB:       RedisDb,  // default 0
+		DialTimeout:  10 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		PoolSize:     10,
+		PoolTimeout:  30 * time.Second,
 	})
-	val, err := client.Get("test2").Result()
-	fmt.Println(val)
-	fmt.Println(err)
+	// client.FlushDB() // clean
+}
+
+func TestConnect() {
+	pong, err := client.Ping().Result()
+	if err != nil {
+		fmt.Println("Error on connect to redis")
+		fmt.Println(pong, err)
+		os.Exit(1)
+	}
+}
+
+func GetVal(key string) string {
+	val, err := client.Get(key).Result()
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return val
+}
+
+func SetVal(key string, val string, expire time.Duration) error {
+	err := client.Set(key, val, expire).Err()
+	return err
 }

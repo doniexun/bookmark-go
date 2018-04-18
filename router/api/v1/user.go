@@ -31,6 +31,7 @@ func GetCaptcha(c *gin.Context) {
 func Signup(c *gin.Context) {
 	var errors []string
 	var signupCommand SingupCommand
+
 	c.BindJSON(&signupCommand)
 
 	mail := signupCommand.Mail

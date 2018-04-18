@@ -2,10 +2,12 @@ package v1
 
 import (
 	"log"
+	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
-	// "github.com/GallenHu/bookmarkgo/model"
+	"github.com/GallenHu/bookmarkgo/model"
+	"github.com/GallenHu/bookmarkgo/pkg/redis"
 )
 
 type SinginCommand struct {
@@ -18,6 +20,8 @@ type SinginCommand struct {
 func Signin(c *gin.Context) {
 	var errors []string
 	var signinCommand SinginCommand
+
+	c.BindJSON(&signinCommand)
 
 	mail := signinCommand.Mail
 	pwd := signinCommand.Password
@@ -56,6 +60,65 @@ func Signin(c *gin.Context) {
 		})
 		return
 	}
+
+	if !model.ExistUserByMail(mail) {
+		errors = append(errors, "账户不存在")
+
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	userid := model.CheckUserMd5Pwd(mail, utils.Md5(mail + pwd))
+	if !(userid > 0) {
+		errors = append(errors, "用户名和密码不匹配")
+
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	token, err := utils.GenerateToken(mail, userid)
+	if err != nil {
+		errors = append(errors, "token生成失败")
+
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	err = redis.SetVal("userid" + utils.Int2str(userid), token, 3 * 24 * time.Hour)
+	if err != nil {
+		log.Println(err)
+
+		errors = append(errors, "token存储失败")
+
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"code" : 200,
+		"msg" : "success",
+		"data" : token,
+	})
 }
 
 func Signout(c *gin.Context) {

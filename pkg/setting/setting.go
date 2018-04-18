@@ -10,7 +10,9 @@ import (
 var (
 	Cfg *ini.File
 
-	RunMode string
+	AppMode string
+	AppPort string
+	AppSecret string
 
 	DbType string
 	DbHost string
@@ -36,7 +38,10 @@ func init() {
 }
 
 func LoadSetting() {
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
+	AppMode = Cfg.Section("app").Key("RUN_MODE").MustString("debug")
+	AppPort = Cfg.Section("app").Key("PORT").MustString("3001")
+	AppSecret = Cfg.Section("app").Key("SECRET").MustString("")
+
 	DbType = Cfg.Section("database").Key("TYPE").MustString("mysql")
 	DbHost = Cfg.Section("database").Key("HOST").MustString("127.0.0.1:3306")
 	DbName = Cfg.Section("database").Key("NAME").MustString("bookmark")
