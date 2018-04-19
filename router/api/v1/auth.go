@@ -2,10 +2,10 @@ package v1
 
 import (
 	"log"
-	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
+	"github.com/GallenHu/bookmarkgo/pkg/setting"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/GallenHu/bookmarkgo/pkg/redis"
 )
@@ -99,7 +99,7 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	err = redis.SetVal("userid" + utils.Int2str(userid), token, 3 * 24 * time.Hour)
+	err = redis.SetVal("userid" + utils.Int2str(userid), token, setting.AppTokenExpire)
 	if err != nil {
 		log.Println(err)
 

@@ -46,7 +46,14 @@ func GetVal(key string) string {
 	return val
 }
 
-func SetVal(key string, val string, expire time.Duration) error {
-	err := client.Set(key, val, expire).Err()
+func SetVal(key string, val string, exphours int) error {
+	exp := time.Duration(exphours) * time.Hour
+	err := client.Set(key, val, exp).Err()
+	return err
+}
+
+func SetExpiration(key string, exphours int) error {
+	exp := time.Duration(exphours) * time.Hour
+	err := client.Expire(key, exp).Err()
 	return err
 }

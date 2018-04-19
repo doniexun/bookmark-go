@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
 	"github.com/GallenHu/bookmarkgo/pkg/redis"
+	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
 
 func JWT() gin.HandlerFunc {
@@ -68,6 +69,9 @@ func JWT() gin.HandlerFunc {
 			c.Abort()
             return
 		}
+
+		// update expirtion date
+		redis.SetExpiration("userid" + utils.Int2str(claims.Id), setting.AppTokenExpire)
 
 		c.Set("userid", claims.Id)
 		c.Next()

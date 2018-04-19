@@ -13,6 +13,7 @@ var (
 	AppMode string
 	AppPort string
 	AppSecret string
+	AppTokenExpire int
 
 	DbType string
 	DbHost string
@@ -41,6 +42,7 @@ func LoadSetting() {
 	AppMode = Cfg.Section("app").Key("RUN_MODE").MustString("debug")
 	AppPort = Cfg.Section("app").Key("PORT").MustString("3001")
 	AppSecret = Cfg.Section("app").Key("SECRET").MustString("")
+	AppTokenExpire = Cfg.Section("app").Key("TOKEN_EXPIRE").MustInt(72)
 
 	DbType = Cfg.Section("database").Key("TYPE").MustString("mysql")
 	DbHost = Cfg.Section("database").Key("HOST").MustString("127.0.0.1:3306")
