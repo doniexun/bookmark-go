@@ -27,3 +27,11 @@ func (bookmark *Bookmark) BeforeUpdate(scope *gorm.Scope) error {
 func (Bookmark) TableName() string { // 自定义表名
 	return "bookmark"
 }
+
+
+func AddBookmark(title string, url string, userid int, folderid int) bool {
+	bookmark := Bookmark{Title: title, Url: url, UserId: userid, FolderId: folderid}
+	db.Create(&bookmark)
+
+	return true
+}
