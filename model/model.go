@@ -15,7 +15,7 @@ type Model struct {
 	ID int `gorm:"primary_key" json:"id"`
     CreatedAt int `json:"created_at"`
     UpdatedAt int `json:"updated_at"`
-    IsDeleted int `json:"is_deleted"` // 不使用默认的DeletedAt
+    DeletedOn int `json:"deleted_on"` // not deleted_at
 }
 
 func init() {
@@ -40,10 +40,12 @@ func init() {
 		os.Exit(1)
 	}
 
-	// defer db.Close()
-
 	db.LogMode(true)
 	db.SingularTable(true)
     db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+}
+
+func CloseDB() {
+	defer db.Close()
 }

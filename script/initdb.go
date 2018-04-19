@@ -29,8 +29,8 @@ func main() {
 		log.Println(err)
 	}
 
-	db.DropTableIfExists(&model.User{}, &model.Bookmark{}, &model.Folders{})
-	db.AutoMigrate(&model.User{}, &model.Bookmark{}, &model.Folders{})
+	db.DropTableIfExists(&model.User{}, &model.Bookmark{}, &model.Folder{})
+	db.AutoMigrate(&model.User{}, &model.Bookmark{}, &model.Folder{})
 
 	fmt.Println("success")
 }
