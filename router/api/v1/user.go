@@ -92,3 +92,25 @@ func Signup(c *gin.Context) {
 		"data" : errors,
 	})
 }
+
+func GetUserInfo(c *gin.Context) {
+	var errors []string
+	userid, exists := c.Get("userid")
+
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"code" : 200,
+		"msg" : "success",
+		"data" : userid,
+	})
+}

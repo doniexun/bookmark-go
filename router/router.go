@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/GallenHu/bookmarkgo/router/api/v1"
+	"github.com/GallenHu/bookmarkgo/middleware/jwt"
 )
 
 func InitRouter() *gin.Engine {
@@ -17,6 +18,8 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/user", v1.Signup)  // 注册
 		apiv1.POST("/auth", v1.Signin)  // 登录
 		apiv1.POST("/auth/signout", v1.Signout) // 登出
+
+		apiv1.GET("/info", jwt.JWT(), v1.GetUserInfo) // 使用中间件
 	}
 
 	return r
