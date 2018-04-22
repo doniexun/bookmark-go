@@ -17,7 +17,7 @@ func JWT() gin.HandlerFunc {
 
 		if len(values) == 0 {
 			errors = append(errors, "缺少token")
-			c.JSON(200, gin.H{
+			c.JSON(401, gin.H{
 				"code" : 401,
 				"msg" : "unauthorized",
 				"data" : errors,
@@ -34,7 +34,7 @@ func JWT() gin.HandlerFunc {
 			token = ""
 
 			errors = append(errors, "token无效")
-			c.JSON(200, gin.H{
+			c.JSON(401, gin.H{
 				"code" : 401,
 				"msg" : "unauthorized",
 				"data" : errors,
@@ -47,7 +47,7 @@ func JWT() gin.HandlerFunc {
 		claims, err := utils.ParseToken(token)
 		if err != nil {
 			errors = append(errors, "token无效")
-			c.JSON(200, gin.H{
+			c.JSON(401, gin.H{
 				"code" : 401,
 				"msg" : "unauthorized",
 				"data" : errors,
@@ -60,7 +60,7 @@ func JWT() gin.HandlerFunc {
 		tokenInStore := redis.GetVal("userid" + utils.Int2str(claims.Id))
 		if tokenInStore != token {
 			errors = append(errors, "token过期")
-			c.JSON(200, gin.H{
+			c.JSON(401, gin.H{
 				"code" : 401,
 				"msg" : "unauthorized",
 				"data" : errors,
