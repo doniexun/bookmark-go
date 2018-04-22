@@ -1,14 +1,28 @@
 package router
 
 import (
+	"time"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/GallenHu/bookmarkgo/router/api/v1"
 	"github.com/GallenHu/bookmarkgo/middleware/jwt"
+	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
 
 func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{setting.AppCors},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DETELE"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		// AllowOriginFunc: func(origin string) bool {
+		// 	return origin == "https://github.com"
+		// },
+		MaxAge: 12 * time.Hour,
+	}))
 
 	apiv1 := r.Group("/api/v1")
 	{

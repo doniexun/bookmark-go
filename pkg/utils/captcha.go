@@ -7,8 +7,8 @@ import (
 // 生成
 func GetCaptcha() (str1 string, str2 string) {
 	var configD = base64Captcha.ConfigDigit{
-		Height:     40,
-		Width:      120,
+		Height:     36,
+		Width:      80,
 		MaxSkew:    0.9,
 		DotCount:   80,
 		CaptchaLen: 5,
