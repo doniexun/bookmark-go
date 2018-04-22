@@ -2,6 +2,7 @@ package router
 
 import (
 	"time"
+	"strings"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/GallenHu/bookmarkgo/router/api/v1"
@@ -12,15 +13,17 @@ import (
 func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{setting.AppCors},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DETELE"},
-		AllowHeaders:     []string{"Origin"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		// AllowOriginFunc: func(origin string) bool {
-		// 	return origin == "https://github.com"
-		// },
+		AllowOriginFunc: func(origin string) bool {
+			// return origin == "https://github.com"
+			return strings.HasPrefix(origin, "chrome-extension://") // 允许chrome-extension访问
+		},
 		MaxAge: 12 * time.Hour,
 	}))
 

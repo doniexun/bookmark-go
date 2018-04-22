@@ -11,7 +11,7 @@ func GetCaptcha() (str1 string, str2 string) {
 		Width:      80,
 		MaxSkew:    0.9,
 		DotCount:   80,
-		CaptchaLen: 5,
+		CaptchaLen: 4,
 	}
 
 	idKeyD, capD := base64Captcha.GenerateCaptcha("", configD)
