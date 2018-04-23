@@ -36,7 +36,7 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/auth", v1.Signin)  // 登录
 		apiv1.POST("/auth/signout", v1.Signout) // 登出
 
-		apiv1.GET("/info", jwt.JWT(), v1.GetUserInfo) // 使用中间件
+		apiv1.GET("/userinfo", jwt.JWT(), v1.GetUserInfo) // 使用中间件
 
 		apiv1.POST("/bookmark", jwt.JWT(), v1.NewBookmark)
 	}

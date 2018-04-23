@@ -10,6 +10,7 @@ import (
 type BookmarkCommand struct {
 	Title string `json:"title"`
 	Url string `json:"url"`
+	Tag string `json:"tag"`
 	FolderId int `json:"folderid"`
 }
 
@@ -33,6 +34,7 @@ func NewBookmark(c *gin.Context) {
 
 	title := bookmarkCommand.Title
 	url := bookmarkCommand.Url
+	tag := bookmarkCommand.Tag
 	folderid := bookmarkCommand.FolderId // default 0
 
 	valid := validation.Validation{}
@@ -58,7 +60,7 @@ func NewBookmark(c *gin.Context) {
 		title = "Untitled"
 	}
 
-	model.AddBookmark(title, url, userid.(int), folderid)
+	model.AddBookmark(title, url, tag, userid.(int), folderid)
 
 	c.JSON(200, gin.H{
         "code" : 200,

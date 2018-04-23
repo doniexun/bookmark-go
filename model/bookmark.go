@@ -10,6 +10,7 @@ type Bookmark struct {
 
 	Title		string	`gorm:"not null;type:varchar(255)";DEFAULT:'Untitle' json:"title"`
 	Url			string	`gorm:"not null;type:varchar(255)" json:"url"`
+	Tag			string  `gorm:"not null;type:varchar(255)" json:"tag"`
 	UserId		int		`gorm:"not null;" json:"user_id"`
 	FolderId	int		`gorm:"not null;" json:"folder_id"`
 }
@@ -29,8 +30,8 @@ func (Bookmark) TableName() string { // 自定义表名
 }
 
 
-func AddBookmark(title string, url string, userid int, folderid int) bool {
-	bookmark := Bookmark{Title: title, Url: url, UserId: userid, FolderId: folderid}
+func AddBookmark(title string, url string, tag string, userid int, folderid int) bool {
+	bookmark := Bookmark{Title: title, Url: url, Tag: tag, UserId: userid, FolderId: folderid}
 	db.Create(&bookmark)
 
 	return true
