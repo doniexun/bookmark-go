@@ -1,5 +1,5 @@
-hash: 1215ed3c3a904b1b75977ec30a5d3d06655d9463d2f8d820017cd91da52e5f52
-updated: 2018-04-22T09:35:54.469641643Z
+hash: 17dd6310677a1bf4c949726934f878566c46679f7a0952ed8234398e1a1b174c
+updated: 2018-04-25T21:02:19.646304041+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -47,6 +47,8 @@ imports:
   version: 04140366298a54a039076d798123ffa108fff46c
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/microcosm-cc/bluemonday
+  version: 995366fdf961d03629cd17361bddd32745718e2c
 - name: github.com/mojocn/base64Captcha
   version: 9479fc95fcf65b459b5608cffcec627db12e3fd3
 - name: github.com/ugorji/go
@@ -58,6 +60,11 @@ imports:
   subpackages:
   - font
   - math/fixed
+- name: golang.org/x/net
+  version: 5f9ae10d9af5b1c89ae6904293b14b064d4ada23
+  subpackages:
+  - html
+  - html/atom
 - name: golang.org/x/sys
   version: b126b21c05a91c856b027c16779c12e3bf236954
   subpackages:

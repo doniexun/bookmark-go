@@ -1,15 +1,59 @@
 package v1
 
 import (
-	"fmt"
+	"log"
 	"github.com/gin-gonic/gin"
+	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/model"
+	"github.com/microcosm-cc/bluemonday"
 )
 
-func AddFolder(c *gin.Context) {
-	model.AddFolder("folderx", 123)
+type FolderCommand struct {
+	Name string `json:"name"`
+}
 
-	fmt.Println("add success")
+func NewFolder(c *gin.Context) {
+	var errors []string
+	var folderCommand FolderCommand
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.BindJSON(&folderCommand)
+
+	name := folderCommand.Name
+
+	p := bluemonday.UGCPolicy()
+	name = p.Sanitize(name)
+
+	valid := validation.Validation{}
+	valid.Required(name, "name").Message("名称不能为空")
+
+	if valid.HasErrors() {
+        for _, err := range valid.Errors {
+			log.Println(err.Key, err.Message)
+			errors = append(errors, err.Message)
+		}
+
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	model.AddFolder(name, userid.(int))
 
 	c.JSON(200, gin.H{
         "code" : 200,
@@ -19,12 +63,25 @@ func AddFolder(c *gin.Context) {
 }
 
 func GetFolders(c *gin.Context) {
-	maps := make(map[string]interface{})
-	maps["id"] = 1
+	var errors []string
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	folders := model.GetFoldersByPage(1, userid.(int))
+	log.Println(folders)
 
 	c.JSON(200, gin.H{
 		"code": 200,
 		"msg": "success",
-		"data": model.GetFolderTotal(maps),
+		"data": folders,
 	})
 }

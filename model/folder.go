@@ -5,6 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+const PAGESIZE = 10
+
 type Folder struct {
 	Model
 
@@ -26,23 +28,25 @@ func (Folder) TableName() string { // 自定义表名
   	return "folder"
 }
 
-func AddFolder(name string, userId int) bool {
+func AddFolder(name string, userid int) bool {
 	db.Create(&Folder{
 		Name: name,
-		UserId: userId,
+		UserId: userid,
 	})
 
 	return true
 }
 
-// func GetFolder(pageNum int, pageSize int, maps interface {}) (Folder []Folder) {
-// 	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&Folder)
+func GetFoldersByPage(pagenum int, userid int) (folders []Folder) {
+	offset := (pagenum - 1) * PAGESIZE
 
-// 	return
-// }
+	db.Select("id, name").Where(Folder{UserId: userid}).Where("deleted_on = ?", 0).Offset(offset).Limit(PAGESIZE).Find(&folders)
 
-func GetFolderTotal(maps interface {}) int {
-	var count int
-	db.Model(&Folder{}).Where(maps).Count(&count)
-	return count
+	return
 }
+
+// func GetFolderTotal(maps interface {}) int {
+// 	var count int
+// 	db.Model(&Folder{}).Where(maps).Count(&count)
+// 	return count
+// }

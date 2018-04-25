@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/model"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 type BookmarkCommand struct {
@@ -36,6 +37,11 @@ func NewBookmark(c *gin.Context) {
 	url := bookmarkCommand.Url
 	tag := bookmarkCommand.Tag
 	folderid := bookmarkCommand.FolderId // default 0
+
+	p := bluemonday.UGCPolicy()
+	title = p.Sanitize(title)
+	url = p.Sanitize(url)
+	tag = p.Sanitize(tag)
 
 	valid := validation.Validation{}
 
