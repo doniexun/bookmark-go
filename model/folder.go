@@ -14,6 +14,11 @@ type Folder struct {
 	UserId		int		`gorm:"not null;" json:"user_id"`
 }
 
+type FolderJson struct {
+	Name	string	`json:"name"`
+	Id      int		`json:"id"`
+}
+
 // models callbacks
 func (folder *Folder) BeforeCreate(scope *gorm.Scope) error {
     scope.SetColumn("CreatedAt", time.Now().Unix())
@@ -37,12 +42,21 @@ func AddFolder(name string, userid int) bool {
 	return true
 }
 
-func GetFoldersByPage(pagenum int, userid int) (folders []Folder) {
+func GetFoldersByPage(pagenum int, userid int) FolderJson {
+	var folderJson FolderJson
+
 	offset := (pagenum - 1) * PAGESIZE
 
-	db.Select("id, name").Where(Folder{UserId: userid}).Where("deleted_on = ?", 0).Offset(offset).Limit(PAGESIZE).Find(&folders)
+	rows, err := db.Model(&Folder{}).Select("id, name").Where(Folder{UserId: userid}).Where("deleted_on = ?", 0).Offset(offset).Limit(PAGESIZE).Rows()
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		db.ScanRows(rows, &folderJson)
+		// do something
+	}
 
-	return
+	return folderJson
 }
 
 // func GetFolderTotal(maps interface {}) int {
