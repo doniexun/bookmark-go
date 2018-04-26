@@ -1,6 +1,5 @@
 FROM instrumentisto/glide:latest
 
-# RUN mkdir -p /go/src/github.com/GallenHu/bookmarkgo/
 WORKDIR /go/src/github.com/GallenHu/bookmarkgo/
 
 ADD . /go/src/github.com/GallenHu/bookmarkgo/

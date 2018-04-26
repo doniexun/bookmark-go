@@ -14,6 +14,11 @@ glide install           # 安装依赖
 go run main.go          # -c 指定配置文件路径
 ```
 
+## Run with Docker
+```sh
+docker run -d -v /your/config/app.ini:/go/app.ini -p 3001:3001 bookmark:v1
+```
+
 ## Usage
 
 Captcha
