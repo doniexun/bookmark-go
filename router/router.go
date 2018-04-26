@@ -40,6 +40,7 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/bookmark", jwt.JWT(), v1.NewBookmark)
 		apiv1.POST("/folder", jwt.JWT(), v1.NewFolder)
 		apiv1.GET("/folders", jwt.JWT(), v1.GetFolders)
+		apiv1.GET("/bookmarks", jwt.JWT(), v1.GetBookmarks)
 	}
 
 	return r

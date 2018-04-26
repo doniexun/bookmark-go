@@ -77,7 +77,6 @@ func GetFolders(c *gin.Context) {
 	}
 
 	folders := model.GetFoldersByPage(1, userid.(int))
-	log.Println(folders)
 
 	c.JSON(200, gin.H{
 		"code": 200,

@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/GallenHu/bookmarkgo/pkg/utils"
 )
 
 type BookmarkCommand struct {
@@ -73,4 +74,32 @@ func NewBookmark(c *gin.Context) {
         "msg" : "success",
         "data" : nil,
     })
+}
+
+func GetBookmarks(c *gin.Context) {
+	folderid := c.Query("folderId")
+
+	var errors []string
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	if folderid == "" {
+		folderid = utils.Int2str(0)
+	}
+
+	bookmarks := model.GetBookmarksByFolderId(1, userid.(int), utils.Str2int(folderid))
+	c.JSON(200, gin.H{
+		"code": 200,
+		"msg": "success",
+		"data": bookmarks,
+	})
 }

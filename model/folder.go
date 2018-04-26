@@ -14,6 +14,7 @@ type Folder struct {
 	UserId		int		`gorm:"not null;" json:"user_id"`
 }
 
+// JSON response format
 type FolderJson struct {
 	Name	string	`json:"name"`
 	Id      int		`json:"id"`
@@ -42,21 +43,31 @@ func AddFolder(name string, userid int) bool {
 	return true
 }
 
-func GetFoldersByPage(pagenum int, userid int) FolderJson {
-	var folderJson FolderJson
+func GetFoldersByPage(pagenum int, userid int) []*FolderJson {
+	var folders []*FolderJson
 
 	offset := (pagenum - 1) * PAGESIZE
 
-	rows, err := db.Model(&Folder{}).Select("id, name").Where(Folder{UserId: userid}).Where("deleted_on = ?", 0).Offset(offset).Limit(PAGESIZE).Rows()
+	rows, err := db.Model(&Folder{}).
+		Select("id, name").
+		Where(Folder{UserId: userid}).
+		Where("deleted_on = ?", 0).
+		Offset(offset).
+		Limit(PAGESIZE).
+		Order("updated_at desc, created_at desc").
+		Rows()
 	if err != nil {
 		panic(err)
 	}
 	for rows.Next() {
-		db.ScanRows(rows, &folderJson)
+		// define var in each loop
+		var folderjson FolderJson
+		db.ScanRows(rows, &folderjson)
 		// do something
+		folders = append(folders, &folderjson)
 	}
 
-	return folderJson
+	return folders
 }
 
 // func GetFolderTotal(maps interface {}) int {
