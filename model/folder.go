@@ -69,8 +69,7 @@ func GetFoldersByPage(pagenum int, userid int) []*FolderJson {
 	return folders
 }
 
-// func GetFolderTotal(maps interface {}) int {
-// 	var count int
-// 	db.Model(&Folder{}).Where(maps).Count(&count)
-// 	return count
-// }
+func DeleteFolderByIds(ids []int, userid int) bool {
+	db.Where(Folder{UserId: userid}).Where("id in (?)", ids).Delete(Folder{})
+	return true
+}

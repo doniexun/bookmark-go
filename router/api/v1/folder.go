@@ -84,3 +84,41 @@ func GetFolders(c *gin.Context) {
 		"data": folders,
 	})
 }
+
+func DelFolders(c *gin.Context) {
+	var errors []string
+	var deleteaction DeleteAction
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.BindJSON(&deleteaction)
+	ids := deleteaction.Id
+
+	if len(ids) == 0 {
+		errors = append(errors, "id 为空")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "fail",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	model.DeleteFolderByIds(ids, userid.(int))
+	c.JSON(200, gin.H{
+        "code" : 200,
+        "msg" : "success",
+        "data" : nil,
+    })
+}

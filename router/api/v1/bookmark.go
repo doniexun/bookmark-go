@@ -134,6 +134,8 @@ func DelBookmarks(c *gin.Context) {
 			"msg" : "fail",
 			"data" : errors,
 		})
+
+		return
 	}
 
 	model.DeleteBookmarkByIds(ids, userid.(int))

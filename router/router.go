@@ -48,6 +48,7 @@ func InitRouter() *gin.Engine {
 	apiv1del.Use(jwt.JWT())
 	{
 		apiv1del.POST("/bookmarks", v1.DelBookmarks)
+		apiv1del.POST("/folders", v1.DelFolders)
 	}
 
 	return r
