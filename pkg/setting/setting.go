@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"flag"
 	"github.com/go-ini/ini"
 )
 
@@ -29,7 +30,10 @@ var (
 
 func init() {
 	var err error
-	Cfg, err = ini.Load("conf/app.ini") // 相对根目录的路径
+	configFilePath := flag.String("c", "conf/app.ini", "config file path")
+	flag.Parse()
+	log.Println("[config file path]: ", *configFilePath)
+	Cfg, err = ini.Load(*configFilePath) // 相对根目录的路径
 	if err != nil {
 		fmt.Println("failed load ini")
 		log.Fatalf("load ini error %v", err)
