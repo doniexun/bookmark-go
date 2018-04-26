@@ -46,7 +46,7 @@ func AddUser(mail string, pwd string) bool {
 
 func CheckUserMd5Pwd(mail string, md5pwd string) int {
 	var user User
-	db.Select("id, mail").Where(User{Mail: mail, Password: md5pwd}).Where("deleted_on = ?", 0).First(&user)
+	db.Select("id, mail").Where(User{Mail: mail, Password: md5pwd}).First(&user)
 
 	return user.ID // if not exist return 0
 }

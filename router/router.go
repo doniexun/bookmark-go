@@ -43,5 +43,12 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/bookmarks", jwt.JWT(), v1.GetBookmarks)
 	}
 
+	// delete
+	apiv1del := r.Group("/api/v1/del")
+	apiv1del.Use(jwt.JWT())
+	{
+		apiv1del.POST("/bookmarks", v1.DelBookmarks)
+	}
+
 	return r
 }

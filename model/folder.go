@@ -51,7 +51,6 @@ func GetFoldersByPage(pagenum int, userid int) []*FolderJson {
 	rows, err := db.Model(&Folder{}).
 		Select("id, name").
 		Where(Folder{UserId: userid}).
-		Where("deleted_on = ?", 0).
 		Offset(offset).
 		Limit(PAGESIZE).
 		Order("updated_at desc, created_at desc").

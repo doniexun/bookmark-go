@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 	"github.com/jinzhu/gorm"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -15,7 +16,7 @@ type Model struct {
 	ID int `gorm:"primary_key" json:"id"`
     CreatedAt int `json:"created_at"`
     UpdatedAt int `json:"updated_at"`
-    DeletedOn int `json:"deleted_on"` // not deleted_at
+    DeletedAt *time.Time `gorm:"index" json:"deleted_at"`
 }
 
 func init() {

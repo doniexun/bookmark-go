@@ -16,9 +16,13 @@ type BookmarkCommand struct {
 	FolderId int `json:"folderid"`
 }
 
+type DeleteAction struct {
+	Id []int `json: id`
+}
+
 func NewBookmark(c *gin.Context) {
 	var errors []string
-	var bookmarkCommand BookmarkCommand
+	var bookmarkcommand BookmarkCommand
 
 	userid, exists := c.Get("userid")
 	if !exists {
@@ -32,12 +36,12 @@ func NewBookmark(c *gin.Context) {
 		return
 	}
 
-	c.BindJSON(&bookmarkCommand)
+	c.BindJSON(&bookmarkcommand)
 
-	title := bookmarkCommand.Title
-	url := bookmarkCommand.Url
-	tag := bookmarkCommand.Tag
-	folderid := bookmarkCommand.FolderId // default 0
+	title := bookmarkcommand.Title
+	url := bookmarkcommand.Url
+	tag := bookmarkcommand.Tag
+	folderid := bookmarkcommand.FolderId // default 0
 
 	p := bluemonday.UGCPolicy()
 	title = p.Sanitize(title)
@@ -102,4 +106,40 @@ func GetBookmarks(c *gin.Context) {
 		"msg": "success",
 		"data": bookmarks,
 	})
+}
+
+func DelBookmarks(c *gin.Context) {
+	var errors []string
+	var deleteaction DeleteAction
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.BindJSON(&deleteaction)
+	ids := deleteaction.Id
+
+	if len(ids) == 0 {
+		errors = append(errors, "id 为空")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "fail",
+			"data" : errors,
+		})
+	}
+
+	model.DeleteBookmarkByIds(ids, userid.(int))
+	c.JSON(200, gin.H{
+        "code" : 200,
+        "msg" : "success",
+        "data" : nil,
+    })
 }

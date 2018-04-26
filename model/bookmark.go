@@ -56,7 +56,6 @@ func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJs
 		rows, err = db.Model(&Bookmark{}).
 			Select("id, title, url, tag").
 			Where(Bookmark{UserId: userid}).
-			Where("deleted_on = ?", 0).
 			Offset(offset).
 			Limit(PAGESIZE).
 			Order("updated_at desc, created_at desc").
@@ -65,7 +64,6 @@ func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJs
 		rows, err = db.Model(&Bookmark{}).
 			Select("id, title, url, tag").
 			Where(Bookmark{UserId: userid, FolderId: folderid}).
-			Where("deleted_on = ?", 0).
 			Offset(offset).
 			Limit(PAGESIZE).
 			Order("updated_at desc, created_at desc").
@@ -84,4 +82,9 @@ func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJs
 	}
 
 	return bookmarks
+}
+
+func DeleteBookmarkByIds(ids []int, userid int) bool {
+	db.Where(Bookmark{UserId: userid}).Where("id in (?)", ids).Delete(Bookmark{})
+	return true
 }
