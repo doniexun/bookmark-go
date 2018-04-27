@@ -15,6 +15,7 @@ type User struct {
 // models callbacks
 func (user *User) BeforeCreate(scope *gorm.Scope) error {
     scope.SetColumn("CreatedAt", time.Now().Unix())
+    scope.SetColumn("UpdatedAt", time.Now().Unix())
     return nil
 }
 func (user *User) BeforeUpdate(scope *gorm.Scope) error {

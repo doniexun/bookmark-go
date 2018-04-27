@@ -27,6 +27,7 @@ type BookmarkJson struct {
 // models callbacks
 func (bookmark *Bookmark) BeforeCreate(scope *gorm.Scope) error {
     scope.SetColumn("CreatedAt", time.Now().Unix())
+    scope.SetColumn("UpdatedAt", time.Now().Unix())
     return nil
 }
 func (bookmark *Bookmark) BeforeUpdate(scope *gorm.Scope) error {

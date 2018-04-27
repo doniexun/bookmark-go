@@ -23,6 +23,7 @@ type FolderJson struct {
 // models callbacks
 func (folder *Folder) BeforeCreate(scope *gorm.Scope) error {
     scope.SetColumn("CreatedAt", time.Now().Unix())
+    scope.SetColumn("UpdatedAt", time.Now().Unix())
     return nil
 }
 func (folder *Folder) BeforeUpdate(scope *gorm.Scope) error {
