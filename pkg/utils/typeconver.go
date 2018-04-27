@@ -8,10 +8,11 @@ func Int2str(i int) string {
 	return strconv.Itoa(i)
 }
 
-func Str2int(s string) int {
+// string无法转换成int时返回 defaultval
+func Str2int(s string, defaultval int) int {
 	num, err := strconv.Atoi(s)
 	if err != nil {
-		panic(err)
+		return defaultval
 	}
 	return num
 }

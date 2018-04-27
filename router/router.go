@@ -27,17 +27,20 @@ func InitRouter() *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	r.GET("/", v1.Hello)
+
 	apiv1 := r.Group("/api/v1")
 	{
 		apiv1.GET("/captcha", v1.GetCaptcha)
 
 		apiv1.POST("/user", v1.Signup)  // 注册
 		apiv1.POST("/auth", v1.Signin)  // 登录
-		apiv1.POST("/auth/signout", v1.Signout) // 登出
+		apiv1.POST("/auth/signout", jwt.JWT(), v1.Signout) // 登出
 
 		apiv1.GET("/userinfo", jwt.JWT(), v1.GetUserInfo) // 使用中间件
 
 		apiv1.POST("/bookmark", jwt.JWT(), v1.NewBookmark)
+		apiv1.PUT("/bookmark", jwt.JWT(), v1.ModifyBookmark)
 		apiv1.POST("/folder", jwt.JWT(), v1.NewFolder)
 		apiv1.GET("/folders", jwt.JWT(), v1.GetFolders)
 		apiv1.GET("/bookmarks", jwt.JWT(), v1.GetBookmarks)

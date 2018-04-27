@@ -15,6 +15,14 @@ type SingupCommand struct {
 	Captcha string `json:"captcha"`
 }
 
+func Hello(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"code" : 200,
+		"msg" : "success",
+		"data" : "hello world",
+	})
+}
+
 // 获取验证码
 func GetCaptcha(c *gin.Context) {
 	capID, capImg := utils.GetCaptcha()

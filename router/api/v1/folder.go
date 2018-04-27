@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/GallenHu/bookmarkgo/pkg/utils"
 )
 
 type FolderCommand struct {
@@ -63,6 +64,8 @@ func NewFolder(c *gin.Context) {
 }
 
 func GetFolders(c *gin.Context) {
+	page := c.Query("page")
+
 	var errors []string
 	userid, exists := c.Get("userid")
 	if !exists {
@@ -76,7 +79,7 @@ func GetFolders(c *gin.Context) {
 		return
 	}
 
-	folders := model.GetFoldersByPage(1, userid.(int))
+	folders := model.GetFoldersByPage(utils.Str2int(page, 1), userid.(int))
 
 	c.JSON(200, gin.H{
 		"code": 200,

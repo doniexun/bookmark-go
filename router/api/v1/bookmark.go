@@ -20,6 +20,14 @@ type DeleteAction struct {
 	Id []int `json: id`
 }
 
+type ModifyAction struct {
+	Id int `json: id`
+	Title string `json:"title"`
+	Url string `json:"url"`
+	Tag string `json:"tag"`
+	FolderId int `json:"folderid"`
+}
+
 func NewBookmark(c *gin.Context) {
 	var errors []string
 	var bookmarkcommand BookmarkCommand
@@ -80,8 +88,13 @@ func NewBookmark(c *gin.Context) {
     })
 }
 
+func GetBookmark(c *gin.Context) {
+	// todo
+}
+
 func GetBookmarks(c *gin.Context) {
 	folderid := c.Query("folderId")
+	page := c.Query("page")
 
 	var errors []string
 	userid, exists := c.Get("userid")
@@ -96,16 +109,69 @@ func GetBookmarks(c *gin.Context) {
 		return
 	}
 
-	if folderid == "" {
-		folderid = utils.Int2str(0)
-	}
-
-	bookmarks := model.GetBookmarksByFolderId(1, userid.(int), utils.Str2int(folderid))
+	bookmarks := model.GetBookmarksByFolderId(utils.Str2int(page, 1), userid.(int), utils.Str2int(folderid, 0))
 	c.JSON(200, gin.H{
 		"code": 200,
 		"msg": "success",
 		"data": bookmarks,
 	})
+}
+
+func ModifyBookmark(c *gin.Context) {
+	var errors []string
+	var modifyaction ModifyAction
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.BindJSON(&modifyaction)
+	bookmarkid := modifyaction.Id
+	bookmarktitle := modifyaction.Title
+	bookmarkurl := modifyaction.Url
+	bookmarktag := modifyaction.Tag
+	bookmarkfolderid := modifyaction.FolderId
+
+	log.Println(bookmarkid)
+	// bookmarkidint := utils.Str2int(bookmarkid, 0)
+	if bookmarkid == 0 {
+		errors = append(errors, "书签id有误")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	bm, err := model.GetBookmarkById(bookmarkid, userid.(int))
+	if err != nil {
+		errors = append(errors, "书签id有误.")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	model.ModifyBookmark(bm, userid.(int), bookmarktitle, bookmarkurl, bookmarktag, bookmarkfolderid)
+
+	c.JSON(200, gin.H{
+        "code" : 200,
+        "msg" : "success",
+        "data" : modifyaction,
+    })
 }
 
 func DelBookmarks(c *gin.Context) {

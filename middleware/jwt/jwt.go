@@ -57,7 +57,9 @@ func JWT() gin.HandlerFunc {
             return
 		}
 
-		tokenInStore := redis.GetVal("userid" + utils.Int2str(claims.Id))
+		idstr := utils.Int2str(claims.Id)
+
+		tokenInStore := redis.GetVal("userid" + idstr)
 		if tokenInStore != token {
 			errors = append(errors, "token过期")
 			c.JSON(401, gin.H{
@@ -71,7 +73,7 @@ func JWT() gin.HandlerFunc {
 		}
 
 		// update expirtion date
-		redis.SetExpiration("userid" + utils.Int2str(claims.Id), setting.AppTokenExpire)
+		redis.SetExpiration("userid" + idstr, setting.AppTokenExpire)
 
 		c.Set("userid", claims.Id)
 		c.Next()

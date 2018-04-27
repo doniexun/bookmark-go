@@ -57,3 +57,8 @@ func SetExpiration(key string, exphours int) error {
 	err := client.Expire(key, exp).Err()
 	return err
 }
+
+func DelVal(key string) bool {
+	client.Del(key)
+	return true
+}

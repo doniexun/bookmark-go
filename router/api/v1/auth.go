@@ -122,5 +122,25 @@ func Signin(c *gin.Context) {
 }
 
 func Signout(c *gin.Context) {
+	var errors []string
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
 
+		return
+	}
+
+	useridint := userid.(int)
+
+	redis.DelVal("userid" + utils.Int2str(useridint))
+	c.JSON(200, gin.H{
+		"code" : 200,
+		"msg" : "success",
+		"data" : userid,
+	})
 }

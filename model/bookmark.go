@@ -46,6 +46,18 @@ func AddBookmark(title string, url string, tag string, userid int, folderid int)
 	return true
 }
 
+func GetBookmarkById(id int, userid int) (*Bookmark, error) {
+	var bookmark Bookmark
+	err := db.Model(&Bookmark{}).
+		Select("id, title, url, tag, folder_id").
+		Where(Bookmark{UserId: userid}).
+		Where("id = ?", id).
+		First(&bookmark).
+		Error
+
+	return &bookmark, err;
+}
+
 func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJson  {
 	var bookmarks []*BookmarkJson
 	var rows *sql.Rows
@@ -82,6 +94,15 @@ func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJs
 	}
 
 	return bookmarks
+}
+
+func ModifyBookmark(bm *Bookmark, userid int, title string, url string, tag string, folderid int) {
+	bm.UserId = userid
+	bm.Title = title
+	bm.Url = url
+	bm.Tag = tag
+	bm.FolderId = folderid
+	db.Save(&bm)
 }
 
 func DeleteBookmarkByIds(ids []int, userid int) bool {
