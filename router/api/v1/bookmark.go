@@ -2,11 +2,13 @@ package v1
 
 import (
 	"log"
+	"strings"
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
+	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
 
 type BookmarkCommand struct {
@@ -210,4 +212,50 @@ func DelBookmarks(c *gin.Context) {
         "msg" : "success",
         "data" : nil,
     })
+}
+
+func SearchBookmarks(c *gin.Context) {
+	var errors []string
+
+	if setting.AllowSearch != 1 {
+		errors = append(errors, "搜索功能已关闭")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "fail",
+			"data" : errors,
+		})
+		return
+	}
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	folderid := c.Query("folderId")
+	key := c.Query("keyword")
+	key = strings.TrimSpace(key)
+
+	if key == "" {
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "success",
+			"data" : nil,
+		})
+		return
+	}
+
+	bookmarks := model.SearchBookmarks(userid.(int), utils.Str2int(folderid, 0), key)
+	c.JSON(200, gin.H{
+		"code": 200,
+		"msg": "success",
+		"data": bookmarks,
+	})
 }

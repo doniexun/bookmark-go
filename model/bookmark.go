@@ -110,3 +110,44 @@ func DeleteBookmarkByIds(ids []int, userid int) bool {
 	db.Where(Bookmark{UserId: userid}).Where("id in (?)", ids).Delete(Bookmark{})
 	return true
 }
+
+func SearchBookmarks(userid int, folderid int, keyword string) []*BookmarkJson {
+	var bookmarks []*BookmarkJson
+	var rows *sql.Rows
+	var err error
+	offset := 0
+	limit := 20
+
+	if folderid == 0 {
+		rows, err = db.Model(&Bookmark{}).
+			Select("id, title, url, tag").
+			Where(Bookmark{UserId: userid}).
+			Where("concat(title, url, tag) like ?", "%" + keyword + "%").
+			Offset(offset).
+			Limit(limit).
+			Order("updated_at desc, created_at desc").
+			Rows()
+	} else {
+		rows, err = db.Model(&Bookmark{}).
+			Select("id, title, url, tag").
+			Where(Bookmark{UserId: userid, FolderId: folderid}).
+			Where("concat(title, url, tag) like ?", "%" + keyword + "%").
+			Offset(offset).
+			Limit(limit).
+			Order("updated_at desc, created_at desc").
+			Rows()
+	}
+
+	if err != nil {
+		panic(err)
+	}
+	for rows.Next() {
+		// define var in each loop
+		var bookmarkjson BookmarkJson
+		db.ScanRows(rows, &bookmarkjson)
+		// do something
+		bookmarks = append(bookmarks, &bookmarkjson)
+	}
+
+	return bookmarks
+}

@@ -16,6 +16,7 @@ var (
 	AppSecret string
 	AppTokenExpire int
 	AppCors string
+	AllowSearch int
 
 	DbType string
 	DbHost string
@@ -49,6 +50,7 @@ func LoadSetting() {
 	AppSecret = Cfg.Section("app").Key("SECRET").MustString("")
 	AppTokenExpire = Cfg.Section("app").Key("TOKEN_EXPIRE").MustInt(72)
 	AppCors = Cfg.Section("app").Key("CORS").MustString("http://localhost:8080")
+	AllowSearch = Cfg.Section("app").Key("ALLOW_SEARCH").MustInt(1)
 
 	DbType = Cfg.Section("database").Key("TYPE").MustString("mysql")
 	DbHost = Cfg.Section("database").Key("HOST").MustString("127.0.0.1:3306")
