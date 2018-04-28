@@ -12,6 +12,7 @@ type Folder struct {
 
 	Name		string	`gorm:"not null;type:varchar(255)";DEFAULT:'Unnamed' json:"name"`
 	UserId		int		`gorm:"not null;" json:"user_id"`
+	IsPrivate	uint	`gorm:"not null;type:tinyint;DEFAULT:0" json:"is_private"`
 }
 
 // JSON response format

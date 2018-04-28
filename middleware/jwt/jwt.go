@@ -76,6 +76,7 @@ func JWT() gin.HandlerFunc {
 		redis.SetExpiration("userid" + idstr, setting.AppTokenExpire)
 
 		c.Set("userid", claims.Id)
+		c.Set("showprivate", claims.ShowPrivate)
 		c.Next()
 	}
 }

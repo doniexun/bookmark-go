@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log"
 	"time"
 	"database/sql"
 	"github.com/jinzhu/gorm"
@@ -9,19 +10,21 @@ import (
 type Bookmark struct {
 	Model
 
-	Title		string	`gorm:"not null;type:varchar(255)";DEFAULT:'Untitle' json:"title"`
+	Title		string	`gorm:"not null;type:varchar(255);DEFAULT:'Untitle'" json:"title"`
 	Url			string	`gorm:"not null;type:varchar(255)" json:"url"`
 	Tag			string  `gorm:"not null;type:varchar(255)" json:"tag"`
 	UserId		int		`gorm:"not null;" json:"user_id"`
 	FolderId	int		`gorm:"not null;" json:"folder_id"`
+	IsPrivate	uint	`gorm:"not null;type:tinyint;DEFAULT:0" json:"is_private"`
 }
 
 // JSON response format
 type BookmarkJson struct {
-	Id      int		`json:"id"`
-	Title	string	`json:"title"`
-	Url     string	`json:"url"`
-	Tag		string 	`json:"tag"`
+	Id      	int		`json:"id"`
+	Title		string	`json:"title"`
+	Url     	string	`json:"url"`
+	Tag			string 	`json:"tag"`
+	IsPrivate	uint	`json:"isPrivate"`
 }
 
 // models callbacks
@@ -40,11 +43,13 @@ func (Bookmark) TableName() string { // 自定义表名
 }
 
 
-func AddBookmark(title string, url string, tag string, userid int, folderid int) bool {
-	bookmark := Bookmark{Title: title, Url: url, Tag: tag, UserId: userid, FolderId: folderid}
-	db.Create(&bookmark)
+func AddBookmark(title string, url string, tag string, userid int, folderid int, isprivate uint) error {
+	log.Println("ppp")
+	log.Println(isprivate)
+	bookmark := Bookmark{Title: title, Url: url, Tag: tag, UserId: userid, FolderId: folderid, IsPrivate: isprivate}
+	err := db.Create(&bookmark).Error
 
-	return true
+	return err
 }
 
 func GetBookmarkById(id int, userid int) (*Bookmark, error) {
@@ -59,16 +64,24 @@ func GetBookmarkById(id int, userid int) (*Bookmark, error) {
 	return &bookmark, err;
 }
 
-func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJson  {
+func GetBookmarksByFolderId(showprivate uint, pagenum int, userid int, folderid int) []*BookmarkJson  {
 	var bookmarks []*BookmarkJson
 	var rows *sql.Rows
 	var err error
+	var inwhere interface{}
+
 	offset := (pagenum - 1) * PAGESIZE
 
 	if folderid == 0 {
+		inwhere = Bookmark{UserId: userid}
+	} else {
+		inwhere = Bookmark{UserId: userid, FolderId: folderid}
+	}
+
+	if showprivate == 1 {
 		rows, err = db.Model(&Bookmark{}).
 			Select("id, title, url, tag").
-			Where(Bookmark{UserId: userid}).
+			Where(inwhere).
 			Offset(offset).
 			Limit(PAGESIZE).
 			Order("updated_at desc, created_at desc").
@@ -76,7 +89,8 @@ func GetBookmarksByFolderId(pagenum int, userid int, folderid int) []*BookmarkJs
 	} else {
 		rows, err = db.Model(&Bookmark{}).
 			Select("id, title, url, tag").
-			Where(Bookmark{UserId: userid, FolderId: folderid}).
+			Where(inwhere).
+			Where("is_private = ?", 0).
 			Offset(offset).
 			Limit(PAGESIZE).
 			Order("updated_at desc, created_at desc").

@@ -73,8 +73,8 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	userid := model.CheckUserMd5Pwd(mail, utils.Md5(mail + pwd))
-	if !(userid > 0) {
+	user := model.CheckUserMd5Pwd(mail, utils.Md5(mail + pwd)) // return User model
+	if user.ID == 0 {
 		errors = append(errors, "用户名和密码不匹配")
 
 		c.JSON(200, gin.H{
@@ -86,7 +86,7 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(mail, userid)
+	token, err := utils.GenerateToken(mail, user.ID, user.ShowPrivate)
 	if err != nil {
 		errors = append(errors, "token生成失败")
 
@@ -99,7 +99,7 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	err = redis.SetVal("userid" + utils.Int2str(userid), token, setting.AppTokenExpire)
+	err = redis.SetVal("userid" + utils.Int2str(user.ID), token, setting.AppTokenExpire)
 	if err != nil {
 		log.Println(err)
 

@@ -10,13 +10,15 @@ type User struct {
 
 	Mail		string	`gorm:"unique_index;not null;type:varchar(50)" json:"mail"`
 	Password	string	`gorm:"not null;type:varchar(50)" json:"password"`
+	ShowPrivate	uint	`gorm:"not null;type:tinyint;DEFAULT:0" json:"show_private"`
 }
 
 // JSON response format
 type UserJson struct {
 	Id      	int		`json:"id"`
 	Mail		string	`json:"mail"`
-	CreatedAt	int		`json:"created_at"`
+	CreatedAt	int		`json:"createdAt"`
+	ShowPrivate	uint	`json:"showPrivate"`
 }
 
 // models callbacks
@@ -52,11 +54,11 @@ func AddUser(mail string, pwd string) bool {
 	return true
 }
 
-func CheckUserMd5Pwd(mail string, md5pwd string) int {
+func CheckUserMd5Pwd(mail string, md5pwd string) *User {
 	var user User
 	db.Select("id, mail").Where(User{Mail: mail, Password: md5pwd}).First(&user)
 
-	return user.ID // if not exist return 0
+	return &user // if not exist return 0
 }
 
 func GetUserById(userid int) (*UserJson, error) {
