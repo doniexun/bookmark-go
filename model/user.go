@@ -65,7 +65,7 @@ func GetUserById(userid int) (*UserJson, error) {
 	var user User
 	var userjson UserJson
 	db := db.Model(&User{}).
-		Select("id, mail, created_at").
+		Select("id, mail, created_at, show_private").
 		Where("id = ?", userid).
 		First(&user)
 
@@ -75,4 +75,18 @@ func GetUserById(userid int) (*UserJson, error) {
 
 	db.Scan(&userjson)
 	return &userjson, nil;
+}
+
+func GetUserModelById(userid int) (*User) {
+	var user User
+	db.Model(&User{}).Where("id = ?", userid).First(&user)
+	return &user
+}
+
+func ModifyUser(user *User, mail string, pwd string, showprivate uint) error {
+	user.Mail = mail
+	user.Password = pwd
+	user.ShowPrivate = showprivate
+	err := db.Save(&user).Error
+	return err
 }
