@@ -12,6 +12,13 @@ type User struct {
 	Password	string	`gorm:"not null;type:varchar(50)" json:"password"`
 }
 
+// JSON response format
+type UserJson struct {
+	Id      	int		`json:"id"`
+	Mail		string	`json:"mail"`
+	CreatedAt	int		`json:"created_at"`
+}
+
 // models callbacks
 func (user *User) BeforeCreate(scope *gorm.Scope) error {
     scope.SetColumn("CreatedAt", time.Now().Unix())
@@ -50,4 +57,20 @@ func CheckUserMd5Pwd(mail string, md5pwd string) int {
 	db.Select("id, mail").Where(User{Mail: mail, Password: md5pwd}).First(&user)
 
 	return user.ID // if not exist return 0
+}
+
+func GetUserById(userid int) (*UserJson, error) {
+	var user User
+	var userjson UserJson
+	db := db.Model(&User{}).
+		Select("id, mail, created_at").
+		Where("id = ?", userid).
+		First(&user)
+
+	if db.Error != nil {
+		return nil, db.Error
+	}
+
+	db.Scan(&userjson)
+	return &userjson, nil;
 }

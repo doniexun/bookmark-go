@@ -116,9 +116,21 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
+	user, err := model.GetUserById(userid.(int))
+	if err != nil {
+		errors = append(errors, "读取用户信息失败.")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"code" : 200,
 		"msg" : "success",
-		"data" : userid,
+		"data" : user,
 	})
 }

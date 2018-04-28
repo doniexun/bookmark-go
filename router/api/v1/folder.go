@@ -13,9 +13,14 @@ type FolderCommand struct {
 	Name string `json:"name"`
 }
 
+type ModifyFolderAction struct {
+	Id int `json: id`
+	Name string `json:"name"`
+}
+
 func NewFolder(c *gin.Context) {
 	var errors []string
-	var folderCommand FolderCommand
+	var folderCommand ModifyFolderAction
 
 	userid, exists := c.Get("userid")
 	if !exists {
@@ -123,5 +128,77 @@ func DelFolders(c *gin.Context) {
         "code" : 200,
         "msg" : "success",
         "data" : nil,
+    })
+}
+
+func ModifyFolder(c *gin.Context) {
+	var errors []string
+	var modifyaction ModifyFolderAction
+
+	userid, exists := c.Get("userid")
+	if !exists {
+		errors = append(errors, "读取用户信息失败")
+		c.JSON(200, gin.H{
+			"code" : 500,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	c.BindJSON(&modifyaction)
+	folderid := modifyaction.Id
+	foldername := modifyaction.Name
+
+	p := bluemonday.UGCPolicy()
+	foldername = p.Sanitize(foldername)
+
+	valid := validation.Validation{}
+	valid.Required(foldername, "name").Message("名称不能为空")
+
+	if valid.HasErrors() {
+        for _, err := range valid.Errors {
+			log.Println(err.Key, err.Message)
+			errors = append(errors, err.Message)
+		}
+
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	if folderid == 0 {
+		errors = append(errors, "文件夹id有误")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	folder, err := model.GetFolderById(folderid, userid.(int))
+	if err != nil {
+		errors = append(errors, "文件夹id有误.")
+		c.JSON(200, gin.H{
+			"code" : 400,
+			"msg" : "failed",
+			"data" : errors,
+		})
+
+		return
+	}
+
+	model.ModifyFolder(folder, userid.(int), foldername)
+	c.JSON(200, gin.H{
+        "code" : 200,
+        "msg" : "success",
+        "data" : modifyaction,
     })
 }

@@ -20,7 +20,7 @@ type DeleteAction struct {
 	Id []int `json: id`
 }
 
-type ModifyAction struct {
+type ModifyBmAction struct {
 	Id int `json: id`
 	Title string `json:"title"`
 	Url string `json:"url"`
@@ -119,7 +119,7 @@ func GetBookmarks(c *gin.Context) {
 
 func ModifyBookmark(c *gin.Context) {
 	var errors []string
-	var modifyaction ModifyAction
+	var modifyaction ModifyBmAction
 
 	userid, exists := c.Get("userid")
 	if !exists {
@@ -140,7 +140,7 @@ func ModifyBookmark(c *gin.Context) {
 	bookmarktag := modifyaction.Tag
 	bookmarkfolderid := modifyaction.FolderId
 
-	log.Println(bookmarkid)
+	// log.Println(bookmarkid)
 	// bookmarkidint := utils.Str2int(bookmarkid, 0)
 	if bookmarkid == 0 {
 		errors = append(errors, "书签id有误")

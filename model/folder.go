@@ -70,6 +70,24 @@ func GetFoldersByPage(pagenum int, userid int) []*FolderJson {
 	return folders
 }
 
+func GetFolderById(id int, userid int) (*Folder, error) {
+	var folder Folder
+	err := db.Model(&Folder{}).
+		Select("id, name").
+		Where(Folder{UserId: userid}).
+		Where("id = ?", id).
+		First(&folder).
+		Error
+
+	return &folder, err;
+}
+
+func ModifyFolder(folder *Folder, userid int, name string) {
+	folder.UserId = userid
+	folder.Name = name
+	db.Save(&folder)
+}
+
 func DeleteFolderByIds(ids []int, userid int) bool {
 	db.Where(Folder{UserId: userid}).Where("id in (?)", ids).Delete(Folder{})
 	return true
