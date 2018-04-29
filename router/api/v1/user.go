@@ -7,7 +7,6 @@ import (
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
 	"github.com/GallenHu/bookmarkgo/pkg/redis"
-	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
 
 type SingupCommand struct {
@@ -180,40 +179,14 @@ func ModifyUserInfo(c *gin.Context) {
 	}
 
 	pwd := usermodel.Password
+
 	model.ModifyUser(usermodel, mail, pwd, showprivate)
-
-	token, err := utils.GenerateToken(mail, userid.(int), showprivate)
-	if err != nil {
-		errors = append(errors, "token生成失败")
-
-		c.JSON(200, gin.H{
-			"code" : 500,
-			"msg" : "failed",
-			"data" : errors,
-		})
-
-		return
-	}
-
-	useridint := userid.(int)
-	err = redis.SetVal("userid" + utils.Int2str(useridint), token, setting.AppTokenExpire)
-	if err != nil {
-		log.Println(err)
-
-		errors = append(errors, "token存储失败")
-
-		c.JSON(200, gin.H{
-			"code" : 500,
-			"msg" : "failed",
-			"data" : errors,
-		})
-
-		return
-	}
+	redis.StoreUserPrivate(userid.(int), showprivate)
+	redis.ExtendUserTokenExpire(userid.(int))
 
 	c.JSON(200, gin.H{
 		"code" : 200,
 		"msg" : "success",
-		"data" : token,
+		"data" : nil,
 	})
 }

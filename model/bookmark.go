@@ -56,7 +56,7 @@ func AddBookmark(title string, url string, tag string, userid int, folderid int,
 func GetBookmarkById(id int, userid int) (*Bookmark, error) {
 	var bookmark Bookmark
 	err := db.Model(&Bookmark{}).
-		Select("id, title, url, tag, folder_id").
+		Select("id, title, url, tag, folder_id, is_private").
 		Where(Bookmark{UserId: userid}).
 		Where("id = ?", id).
 		First(&bookmark).
@@ -129,17 +129,25 @@ func DeleteBookmarkByIds(ids []int, userid int) bool {
 	return true
 }
 
-func SearchBookmarks(userid int, folderid int, keyword string) []*BookmarkJson {
+func SearchBookmarks(showprivate uint, userid int, folderid int, keyword string) []*BookmarkJson {
 	var bookmarks []*BookmarkJson
 	var rows *sql.Rows
 	var err error
+	var props string = "id, title, url, tag, is_private"
+	var inwhere interface{}
 	offset := 0
 	limit := 20
 
 	if folderid == 0 {
+		inwhere = Bookmark{UserId: userid}
+	} else {
+		inwhere = Bookmark{UserId: userid, FolderId: folderid}
+	}
+
+	if showprivate == 1 {
 		rows, err = db.Model(&Bookmark{}).
-			Select("id, title, url, tag").
-			Where(Bookmark{UserId: userid}).
+			Select(props).
+			Where(inwhere).
 			Where("concat(title, url, tag) like ?", "%" + keyword + "%").
 			Offset(offset).
 			Limit(limit).
@@ -147,8 +155,9 @@ func SearchBookmarks(userid int, folderid int, keyword string) []*BookmarkJson {
 			Rows()
 	} else {
 		rows, err = db.Model(&Bookmark{}).
-			Select("id, title, url, tag").
-			Where(Bookmark{UserId: userid, FolderId: folderid}).
+			Select(props).
+			Where(inwhere).
+			Where("is_private = ?", 0).
 			Where("concat(title, url, tag) like ?", "%" + keyword + "%").
 			Offset(offset).
 			Limit(limit).

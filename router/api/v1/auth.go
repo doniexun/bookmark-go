@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/astaxie/beego/validation"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
-	"github.com/GallenHu/bookmarkgo/pkg/setting"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/GallenHu/bookmarkgo/pkg/redis"
 )
@@ -86,20 +85,25 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateToken(mail, user.ID, user.ShowPrivate)
-	if err != nil {
-		errors = append(errors, "token生成失败")
+	var err error
+	token := redis.GetVal("user:" + utils.Int2str(user.ID))
+	if token == "" {
+		token, err = utils.GenerateToken(user.ID)
+		if err != nil {
+			errors = append(errors, "token生成失败")
 
-		c.JSON(200, gin.H{
-			"code" : 500,
-			"msg" : "failed",
-			"data" : errors,
-		})
+			c.JSON(200, gin.H{
+				"code" : 500,
+				"msg" : "failed",
+				"data" : errors,
+			})
 
-		return
+			return
+		}
 	}
 
-	err = redis.SetVal("userid" + utils.Int2str(user.ID), token, setting.AppTokenExpire)
+	redis.StoreUserPrivate(user.ID, user.ShowPrivate)
+	err = redis.StoreUserToken(user.ID, token)
 	if err != nil {
 		log.Println(err)
 
@@ -135,9 +139,7 @@ func Signout(c *gin.Context) {
 		return
 	}
 
-	useridint := userid.(int)
-
-	redis.DelVal("userid" + utils.Int2str(useridint))
+	redis.DelUserToken(userid.(int))
 	c.JSON(200, gin.H{
 		"code" : 200,
 		"msg" : "success",

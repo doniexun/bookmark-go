@@ -9,20 +9,16 @@ import (
 var jwtSecret = []byte(setting.AppSecret)
 
 type Claims struct {
-	Mail string `json:"mail"`
 	Id int `json:"id"`
 	Ctime int64 `json:"ctime"`
-	ShowPrivate uint `json:"showprivate"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(mail string, id int, showprivate uint) (string, error) {
-	ctime := time.Now().Unix() // 单位s,打印结果:1491888244
+func GenerateToken(id int) (string, error) {
+	ctime := time.Now().Unix() // currenttime 单位s,打印结果:1491888244
 	claims := Claims{
-		mail,
 		id,
 		ctime,
-		showprivate,
 		jwt.StandardClaims {
 			ExpiresAt : 0,
 			Issuer : "bookmarkgo",

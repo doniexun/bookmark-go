@@ -9,6 +9,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
+	"github.com/GallenHu/bookmarkgo/pkg/redis"
 )
 
 type BookmarkCommand struct {
@@ -118,13 +119,10 @@ func GetBookmarks(c *gin.Context) {
 		return
 	}
 
-	showprivate, priexists := c.Get("showprivate")
-	if !priexists {
-		showprivate = 0
-	}
+	showprivate := redis.GetUserPrivate(userid.(int))
 
 	log.Println("showprivate ", showprivate)
-	bookmarks := model.GetBookmarksByFolderId(showprivate.(uint), utils.Str2int(page, 1), userid.(int), utils.Str2int(folderid, 0))
+	bookmarks := model.GetBookmarksByFolderId(showprivate, utils.Str2int(page, 1), userid.(int), utils.Str2int(folderid, 0))
 	c.JSON(200, gin.H{
 		"code": 200,
 		"msg": "success",
@@ -262,6 +260,7 @@ func SearchBookmarks(c *gin.Context) {
 	folderid := c.Query("folderId")
 	key := c.Query("keyword")
 	key = strings.TrimSpace(key)
+	showprivate := redis.GetUserPrivate(userid.(int))
 
 	if key == "" {
 		c.JSON(200, gin.H{
@@ -272,7 +271,7 @@ func SearchBookmarks(c *gin.Context) {
 		return
 	}
 
-	bookmarks := model.SearchBookmarks(userid.(int), utils.Str2int(folderid, 0), key)
+	bookmarks := model.SearchBookmarks(showprivate, userid.(int), utils.Str2int(folderid, 0), key)
 	c.JSON(200, gin.H{
 		"code": 200,
 		"msg": "success",

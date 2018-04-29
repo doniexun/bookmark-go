@@ -6,6 +6,8 @@ import (
 	"os"
 	"github.com/go-redis/redis"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
+	"github.com/GallenHu/bookmarkgo/model"
+	"github.com/GallenHu/bookmarkgo/pkg/utils"
 )
 
 var RedisHost = setting.RedisHost
@@ -46,7 +48,7 @@ func GetVal(key string) string {
 	return val
 }
 
-func SetVal(key string, val string, exphours int) error {
+func SetVal(key string, val interface {}, exphours int) error {
 	exp := time.Duration(exphours) * time.Hour
 	err := client.Set(key, val, exp).Err()
 	return err
@@ -61,4 +63,39 @@ func SetExpiration(key string, exphours int) error {
 func DelVal(key string) bool {
 	client.Del(key)
 	return true
+}
+
+func StoreUserToken(userid int, token string) error {
+	return SetVal("user:" + utils.Int2str(userid), token, setting.AppTokenExpire)
+}
+
+func GetUserToken(userid int) string {
+	return GetVal("user:" + utils.Int2str(userid))
+}
+
+func ExtendUserTokenExpire(userid int) error {
+	return SetExpiration("user:" + utils.Int2str(userid), setting.AppTokenExpire)
+}
+
+func DelUserToken(userid int) bool {
+	return DelVal("user:" + utils.Int2str(userid))
+}
+
+func StoreUserPrivate(userid int, showprivate uint) error {
+	return SetVal("userprivate:" + utils.Int2str(userid), showprivate, 0)
+}
+
+func GetUserPrivate(userid int) uint {
+	val, err := client.Get("userprivate:" + utils.Int2str(userid)).Result() // 没有值时 err != nil
+	if err != nil {
+		user, err := model.GetUserById(userid)
+		if err != nil {
+			return 0
+		} else {
+			return user.ShowPrivate
+		}
+	} else {
+		valofint := utils.Str2int(val, 0)
+		return uint(valofint)
+	}
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
 	"github.com/GallenHu/bookmarkgo/pkg/redis"
-	"github.com/GallenHu/bookmarkgo/pkg/setting"
 )
 
 func JWT() gin.HandlerFunc {
@@ -57,10 +56,7 @@ func JWT() gin.HandlerFunc {
             return
 		}
 
-		idstr := utils.Int2str(claims.Id)
-
-		tokenInStore := redis.GetVal("userid" + idstr)
-		if tokenInStore != token {
+		if redis.GetUserToken(claims.Id) != token {
 			errors = append(errors, "token过期")
 			c.JSON(401, gin.H{
 				"code" : 401,
@@ -72,11 +68,7 @@ func JWT() gin.HandlerFunc {
             return
 		}
 
-		// update expirtion date
-		redis.SetExpiration("userid" + idstr, setting.AppTokenExpire)
-
 		c.Set("userid", claims.Id)
-		c.Set("showprivate", claims.ShowPrivate)
 		c.Next()
 	}
 }
