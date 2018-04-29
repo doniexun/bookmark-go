@@ -24,6 +24,7 @@ type BookmarkJson struct {
 	Title		string	`json:"title"`
 	Url     	string	`json:"url"`
 	Tag			string 	`json:"tag"`
+	FolderId	int		`gorm:"not null;" json:"folderId"`
 	IsPrivate	uint	`json:"isPrivate"`
 }
 
@@ -69,6 +70,8 @@ func GetBookmarksByFolderId(showprivate uint, pagenum int, userid int, folderid 
 	var rows *sql.Rows
 	var err error
 	var inwhere interface{}
+	var props string = "id, title, url, tag, folder_id, is_private"
+	var orders string = "updated_at desc, created_at desc"
 
 	offset := (pagenum - 1) * PAGESIZE
 
@@ -80,20 +83,20 @@ func GetBookmarksByFolderId(showprivate uint, pagenum int, userid int, folderid 
 
 	if showprivate == 1 {
 		rows, err = db.Model(&Bookmark{}).
-			Select("id, title, url, tag").
+			Select(props).
 			Where(inwhere).
 			Offset(offset).
 			Limit(PAGESIZE).
-			Order("updated_at desc, created_at desc").
+			Order(orders).
 			Rows()
 	} else {
 		rows, err = db.Model(&Bookmark{}).
-			Select("id, title, url, tag").
+			Select(props).
 			Where(inwhere).
 			Where("is_private = ?", 0).
 			Offset(offset).
 			Limit(PAGESIZE).
-			Order("updated_at desc, created_at desc").
+			Order(orders).
 			Rows()
 	}
 
