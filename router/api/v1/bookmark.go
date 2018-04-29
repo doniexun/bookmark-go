@@ -180,7 +180,14 @@ func ModifyBookmark(c *gin.Context) {
 		return
 	}
 
-	model.ModifyBookmark(bm, userid.(int), bookmarktitle, bookmarkurl, bookmarktag, bookmarkfolderid)
+	tags := strings.Split(strings.TrimSpace(bookmarktag), ",")
+	index := utils.InArray("___", tags) // _ repeat 3
+	var isprivate uint = 0
+	if index > -1 {
+		isprivate = 1
+	}
+
+	model.ModifyBookmark(bm, userid.(int), bookmarktitle, bookmarkurl, bookmarktag, bookmarkfolderid, isprivate)
 
 	c.JSON(200, gin.H{
         "code" : 200,

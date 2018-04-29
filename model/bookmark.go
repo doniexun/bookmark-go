@@ -114,12 +114,13 @@ func GetBookmarksByFolderId(showprivate uint, pagenum int, userid int, folderid 
 	return bookmarks
 }
 
-func ModifyBookmark(bm *Bookmark, userid int, title string, url string, tag string, folderid int) {
+func ModifyBookmark(bm *Bookmark, userid int, title string, url string, tag string, folderid int, isprivate uint) {
 	bm.UserId = userid
 	bm.Title = title
 	bm.Url = url
 	bm.Tag = tag
 	bm.FolderId = folderid
+	bm.IsPrivate = isprivate
 	db.Save(&bm)
 }
 
