@@ -27,11 +27,12 @@ CREATE TABLE `bookmark` (
   `created_at` int(11) DEFAULT NULL,
   `updated_at` int(11) DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Untitle',
   `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tag` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int(11) NOT NULL,
   `folder_id` int(11) NOT NULL,
+  `is_private` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idx_bookmark_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -43,7 +44,7 @@ CREATE TABLE `bookmark` (
 
 LOCK TABLES `bookmark` WRITE;
 /*!40000 ALTER TABLE `bookmark` DISABLE KEYS */;
-INSERT INTO `bookmark` VALUES (1,1524754910,0,NULL,'test','https://hinpc.com','',1,0);
+INSERT INTO `bookmark` VALUES (1,1524967796,1524967796,NULL,'扩展程序','chrome://extensions/','',1,0,0);
 /*!40000 ALTER TABLE `bookmark` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,6 +62,7 @@ CREATE TABLE `folder` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int(11) NOT NULL,
+  `is_private` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idx_folder_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -72,7 +74,7 @@ CREATE TABLE `folder` (
 
 LOCK TABLES `folder` WRITE;
 /*!40000 ALTER TABLE `folder` DISABLE KEYS */;
-INSERT INTO `folder` VALUES (1,1524754892,0,NULL,'foldertest',1);
+INSERT INTO `folder` VALUES (1,1524967789,1524967789,NULL,'test_folder',1,0);
 /*!40000 ALTER TABLE `folder` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,6 +92,7 @@ CREATE TABLE `user` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `mail` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `show_private` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uix_user_mail` (`mail`),
   KEY `idx_user_deleted_at` (`deleted_at`)
@@ -102,7 +105,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,1524754869,0,NULL,'test@test.com','874e66194142bb9e23af38e3d6dac780');
+INSERT INTO `user` VALUES (1,1524967768,1524967768,NULL,'test@test.com','874e66194142bb9e23af38e3d6dac780',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -115,4 +118,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-26 23:02:17
+-- Dump completed on 2018-04-29 10:10:17
