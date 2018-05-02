@@ -66,7 +66,7 @@ func DelVal(key string) bool {
 }
 
 func StoreUserToken(userid int, token string) error {
-	return SetVal("user:" + utils.Int2str(userid), token, setting.AppTokenExpire)
+	return SetVal("user:" + utils.Int2str(userid), token, 0)
 }
 
 func GetUserToken(userid int) string {
