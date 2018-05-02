@@ -1,12 +1,11 @@
 package redis
 
 import (
-	"fmt"
-	"time"
+	"log"
 	"os"
-	"github.com/go-redis/redis"
+	"github.com/mediocregopher/radix.v2/redis"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
-	"github.com/GallenHu/bookmarkgo/model"
+	// "github.com/GallenHu/bookmarkgo/model"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
 )
 
@@ -17,64 +16,45 @@ var RedisDb = setting.RedisDb
 var client *redis.Client
 
 func init() {
-	client = redis.NewClient(&redis.Options{
-		Addr:     RedisHost,
-		Password: RedisPwd,
-		DB:       RedisDb,  // default 0
-		DialTimeout:  10 * time.Second,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		PoolSize:     10,
-		PoolTimeout:  30 * time.Second,
-	})
-	// client.FlushDB() // clean
-}
-
-func TestConnect() {
-	pong, err := client.Ping().Result()
+	client, err := redis.Dial("tcp", RedisHost)
 	if err != nil {
-		fmt.Println("Error on connect to redis")
-		fmt.Println(pong, err)
+		log.Println("Error on connect to redis")
+		log.Println(err)
 		os.Exit(1)
 	}
+
+	client.PipeClear()
 }
 
-func GetVal(key string) string {
-	val, err := client.Get(key).Result()
+func GetStrVal(key string) string {
+	val, err := client.Cmd("GET", key).Str()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return ""
 	}
 	return val
 }
 
 func SetVal(key string, val interface {}, exphours int) error {
-	exp := time.Duration(exphours) * time.Hour
-	err := client.Set(key, val, exp).Err()
-	return err
-}
-
-func SetExpiration(key string, exphours int) error {
-	exp := time.Duration(exphours) * time.Hour
-	err := client.Expire(key, exp).Err()
-	return err
+	log.Println("11112222")
+	err := client.Cmd("SET", key, val, "EX", exphours * 3600).Err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DelVal(key string) bool {
-	client.Del(key)
+	client.Cmd("DEL", key)
 	return true
 }
 
 func StoreUserToken(userid int, token string) error {
-	return SetVal("user:" + utils.Int2str(userid), token, 0)
+	return SetVal("user:" + utils.Int2str(userid), token, setting.AppTokenExpire)
 }
 
 func GetUserToken(userid int) string {
-	return GetVal("user:" + utils.Int2str(userid))
-}
-
-func ExtendUserTokenExpire(userid int) error {
-	return SetExpiration("user:" + utils.Int2str(userid), setting.AppTokenExpire)
+	return GetStrVal("user:" + utils.Int2str(userid))
 }
 
 func DelUserToken(userid int) bool {
@@ -82,20 +62,14 @@ func DelUserToken(userid int) bool {
 }
 
 func StoreUserPrivate(userid int, showprivate uint) error {
-	return SetVal("userprivate:" + utils.Int2str(userid), showprivate, 0)
+	return SetVal("userprivate:" + utils.Int2str(userid), showprivate, setting.AppTokenExpire)
 }
 
 func GetUserPrivate(userid int) uint {
-	val, err := client.Get("userprivate:" + utils.Int2str(userid)).Result() // 没有值时 err != nil
+	val, err := client.Cmd("GET", "userprivate:" + utils.Int2str(userid)).Int()
 	if err != nil {
-		user, err := model.GetUserById(userid)
-		if err != nil {
-			return 0
-		} else {
-			return user.ShowPrivate
-		}
-	} else {
-		valofint := utils.Str2int(val, 0)
-		return uint(valofint)
+		return 0
 	}
+
+	return uint(val)
 }

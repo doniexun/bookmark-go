@@ -86,7 +86,9 @@ func Signin(c *gin.Context) {
 	}
 
 	var err error
-	token := redis.GetVal("user:" + utils.Int2str(user.ID))
+	token := redis.GetUserToken(user.ID)
+	log.Println("token111")
+	log.Println(token)
 	if token == "" {
 		token, err = utils.GenerateToken(user.ID)
 		if err != nil {

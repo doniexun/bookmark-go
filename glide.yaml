@@ -18,3 +18,6 @@ import:
 - package: github.com/gin-contrib/cors
   version: ~1.2.0
 - package: github.com/microcosm-cc/bluemonday
+- package: github.com/mediocregopher/radix.v2
+  subpackages:
+  - redis

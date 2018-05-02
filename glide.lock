@@ -1,5 +1,5 @@
-hash: 17dd6310677a1bf4c949726934f878566c46679f7a0952ed8234398e1a1b174c
-updated: 2018-04-25T21:02:19.646304041+08:00
+hash: 2760d874547204e4e8bbb5cb675aa9d90523ee779755f93039efe8cb0b5b5d10
+updated: 2018-05-02T17:33:15.679164584+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -47,6 +47,10 @@ imports:
   version: 04140366298a54a039076d798123ffa108fff46c
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/mediocregopher/radix.v2
+  version: 596a3ed684d9390f4831d6800dffd6a6067933d5
+  subpackages:
+  - redis
 - name: github.com/microcosm-cc/bluemonday
   version: 995366fdf961d03629cd17361bddd32745718e2c
 - name: github.com/mojocn/base64Captcha
