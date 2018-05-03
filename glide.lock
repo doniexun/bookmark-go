@@ -1,5 +1,5 @@
-hash: 17dd6310677a1bf4c949726934f878566c46679f7a0952ed8234398e1a1b174c
-updated: 2018-04-25T21:02:19.646304041+08:00
+hash: fc120f6bc74f0668856660fdf84fdf774894032de65b40b2f1e63e8200a0e73f
+updated: 2018-05-03T14:12:30.43373269+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -7,6 +7,11 @@ imports:
   - validation
 - name: github.com/dgrijalva/jwt-go
   version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
+- name: github.com/garyburd/redigo
+  version: a69d19351219b6dd56f274f96d85a7014a2ec34e
+  subpackages:
+  - internal
+  - redis
 - name: github.com/gin-contrib/cors
   version: cf4846e6a636a76237a28d9286f163c132e841bc
 - name: github.com/gin-contrib/sse
@@ -18,16 +23,6 @@ imports:
   - render
 - name: github.com/go-ini/ini
   version: 5e9692864e22d02ac79e2fa499cffb00520b4fea
-- name: github.com/go-redis/redis
-  version: 877867d2845fbaf86798befe410b6ceb6f5c29a3
-  subpackages:
-  - internal
-  - internal/consistenthash
-  - internal/hashtag
-  - internal/pool
-  - internal/proto
-  - internal/singleflight
-  - internal/util
 - name: github.com/go-sql-driver/mysql
   version: 3287d94d4c6a48a63e16fffaabf27ab20203af2a
 - name: github.com/golang/freetype
@@ -61,7 +56,7 @@ imports:
   - font
   - math/fixed
 - name: golang.org/x/net
-  version: 5f9ae10d9af5b1c89ae6904293b14b064d4ada23
+  version: 640f4622ab692b87c2f3a94265e6f579fe38263d
   subpackages:
   - html
   - html/atom

@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"time"
 	"os"
-	"github.com/go-redis/redis"
+	"os/signal"
+	"syscall"
+	"github.com/garyburd/redigo/redis"
 	"github.com/GallenHu/bookmarkgo/pkg/setting"
 	"github.com/GallenHu/bookmarkgo/model"
 	"github.com/GallenHu/bookmarkgo/pkg/utils"
@@ -14,88 +16,126 @@ var RedisHost = setting.RedisHost
 var RedisPwd = setting.RedisPwd
 var RedisDb = setting.RedisDb
 
-var client *redis.Client
+var Pool *redis.Pool
 
 func init() {
-	client = redis.NewClient(&redis.Options{
-		Addr:     RedisHost,
-		Password: RedisPwd,
-		DB:       RedisDb,  // default 0
-		DialTimeout:  10 * time.Second,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		PoolSize:     10,
-		PoolTimeout:  30 * time.Second,
-	})
-	// client.FlushDB() // clean
+	Pool = newPool(RedisHost)
+	cleanupHook()
+}
+
+func newPool(host string) *redis.Pool {
+	return &redis.Pool{
+		MaxIdle:     3,
+		IdleTimeout: 60 * time.Second,
+
+		Dial: func() (redis.Conn, error) {
+			connect, err := redis.Dial("tcp", host)
+			if err != nil {
+				return nil, err
+			}
+			return connect, err
+		},
+
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+            _, err := c.Do("PING")
+            return err
+        },
+	}
+}
+
+func cleanupHook() {
+	c := make(chan os.Signal, 1)
+    signal.Notify(c, os.Interrupt)
+    signal.Notify(c, syscall.SIGTERM)
+    signal.Notify(c, syscall.SIGKILL)
+    go func() {
+        <-c
+        Pool.Close()
+        os.Exit(0)
+    }()
 }
 
 func TestConnect() {
-	pong, err := client.Ping().Result()
-	if err != nil {
+	conn := Pool.Get()
+	defer conn.Close()
+
+	_, err := redis.String(conn.Do("PING"))
+    if err != nil {
 		fmt.Println("Error on connect to redis")
-		fmt.Println(pong, err)
-		os.Exit(1)
-	}
+		fmt.Println("%v", err)
+        os.Exit(1)
+    }
 }
 
-func GetVal(key string) string {
-	val, err := client.Get(key).Result()
+func GetStrVal(key string) string {
+	conn := Pool.Get()
+	defer conn.Close()
+
+	data, err := redis.String(conn.Do("GET", key))
+    if err != nil {
+        fmt.Errorf("error getting key %s: %v", key, err)
+    }
+    return data
+}
+
+func SetVal(key string, value interface {}) error {
+	conn := Pool.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SET", key, value)
 	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-	return val
+        fmt.Errorf("error setting key %s to %s: %v", key, value.(string), err)
+    }
+    return err
 }
 
-func SetVal(key string, val interface {}, exphours int) error {
-	exp := time.Duration(exphours) * time.Hour
-	err := client.Set(key, val, exp).Err()
-	return err
+func DelVal(key string) error {
+	conn := Pool.Get()
+    defer conn.Close()
+
+    _, err := conn.Do("DEL", key)
+    return err
 }
 
-func SetExpiration(key string, exphours int) error {
-	exp := time.Duration(exphours) * time.Hour
-	err := client.Expire(key, exp).Err()
-	return err
-}
+func SetExpire(key string, hours int) error {
+	conn := Pool.Get()
+	defer conn.Close()
 
-func DelVal(key string) bool {
-	client.Del(key)
-	return true
-}
-
-func StoreUserToken(userid int, token string) error {
-	return SetVal("user:" + utils.Int2str(userid), token, 0)
+	_, err := conn.Do("EXPIRE", key, hours * 3600)
+    return err
 }
 
 func GetUserToken(userid int) string {
-	return GetVal("user:" + utils.Int2str(userid))
+	return GetStrVal("user:" + utils.Int2str(userid))
 }
 
-func ExtendUserTokenExpire(userid int) error {
-	return SetExpiration("user:" + utils.Int2str(userid), setting.AppTokenExpire)
+func StoreUserToken(userid int, token string) error {
+	return SetVal("user:" + utils.Int2str(userid), token)
 }
 
-func DelUserToken(userid int) bool {
+func DelUserToken(userid int) error {
 	return DelVal("user:" + utils.Int2str(userid))
 }
 
+func SetUserTokenExpire(userid int) error {
+	return SetExpire("user:" + utils.Int2str(userid), setting.AppTokenExpire)
+}
+
 func StoreUserPrivate(userid int, showprivate uint) error {
-	return SetVal("userprivate:" + utils.Int2str(userid), showprivate, 0)
+	return SetVal("userprivate:" + utils.Int2str(userid), showprivate)
 }
 
 func GetUserPrivate(userid int) uint {
-	val, err := client.Get("userprivate:" + utils.Int2str(userid)).Result() // 没有值时 err != nil
-	if err != nil {
+	valstr := GetStrVal("userprivate:" + utils.Int2str(userid))
+	if valstr == "" {
 		user, err := model.GetUserById(userid)
 		if err != nil {
 			return 0
 		} else {
 			return user.ShowPrivate
 		}
-	} else {
-		valofint := utils.Str2int(val, 0)
-		return uint(valofint)
 	}
+	valint := utils.Str2int(valstr, 0)
+	return uint(valint)
 }
+

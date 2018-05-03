@@ -86,7 +86,7 @@ func Signin(c *gin.Context) {
 	}
 
 	var err error
-	token := redis.GetVal("user:" + utils.Int2str(user.ID))
+	token := redis.GetUserToken(user.ID)
 	if token == "" {
 		token, err = utils.GenerateToken(user.ID)
 		if err != nil {
@@ -117,6 +117,8 @@ func Signin(c *gin.Context) {
 
 		return
 	}
+
+	redis.SetUserTokenExpire(user.ID)
 
 	c.JSON(200, gin.H{
 		"code" : 200,

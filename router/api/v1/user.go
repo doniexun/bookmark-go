@@ -182,7 +182,6 @@ func ModifyUserInfo(c *gin.Context) {
 
 	model.ModifyUser(usermodel, mail, pwd, showprivate)
 	redis.StoreUserPrivate(userid.(int), showprivate)
-	redis.ExtendUserTokenExpire(userid.(int))
 
 	c.JSON(200, gin.H{
 		"code" : 200,
