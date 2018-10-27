@@ -16,8 +16,13 @@ go run main.go          # -c 指定配置文件路径
 
 ## Run with Docker
 ```sh
-docker pull redis # and run it
-docker run -d --name bookmark -v /your/config/app.ini:/go/app.ini -p 3001:3001 hvanke/bookmark-go
+docker run -d --name bookmarkgo \
+    --link mysql5.7:mysql \
+    --link my-redis:redis \
+    -p 3001:3001 \
+    -e CONFIG_DBHOST=mysql5.7\
+    -e CONFIG_REDISHOST=my-redis\
+    -d bookmarkgo:v1
 ```
 
 ## Usage

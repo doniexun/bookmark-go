@@ -1,5 +1,5 @@
-hash: fc120f6bc74f0668856660fdf84fdf774894032de65b40b2f1e63e8200a0e73f
-updated: 2018-05-03T14:12:30.43373269+08:00
+hash: 029b0b6b86aa7951d5e75ad68f3b70e3eca43f839c22285126a81c57bc85e770
+updated: 2018-10-27T18:36:25.990577+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -21,8 +21,6 @@ imports:
   subpackages:
   - binding
   - render
-- name: github.com/go-ini/ini
-  version: 5e9692864e22d02ac79e2fa499cffb00520b4fea
 - name: github.com/go-sql-driver/mysql
   version: 3287d94d4c6a48a63e16fffaabf27ab20203af2a
 - name: github.com/golang/freetype
@@ -46,6 +44,8 @@ imports:
   version: 995366fdf961d03629cd17361bddd32745718e2c
 - name: github.com/mojocn/base64Captcha
   version: 9479fc95fcf65b459b5608cffcec627db12e3fd3
+- name: github.com/timest/env
+  version: 5fce78d352551610a659700784f25a237fa5f4da
 - name: github.com/ugorji/go
   version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
   subpackages:
