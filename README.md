@@ -11,6 +11,9 @@ Restful API to manage bookmarks.
 git clone https://github.com/GallenHu/bookmark-go.git bookmarkgo # use folder name "bookmarkgo"
 go run script/initdb.go # 初始化数据库(仅第一次运行)
 glide install           # 安装依赖
+# 根据 setting.go 设置环境变量
+export CONFIG_DBPWD=123456
+export CONFIG_DBNAME=bookmark
 go run main.go          # -c 指定配置文件路径
 ```
 

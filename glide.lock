@@ -1,5 +1,5 @@
-hash: 029b0b6b86aa7951d5e75ad68f3b70e3eca43f839c22285126a81c57bc85e770
-updated: 2018-10-27T18:36:25.990577+08:00
+hash: 01c45604ca363a5a40fd32e29c703b710abaa2641ed4b5aeab532e8aa174e332
+updated: 2018-11-08T16:23:26.016205356+08:00
 imports:
 - name: github.com/astaxie/beego
   version: bf5c5626ab429e66d88602e1ab1ab5fbf4629a01
@@ -38,14 +38,14 @@ imports:
   - dialects/mysql
 - name: github.com/jinzhu/inflection
   version: 04140366298a54a039076d798123ffa108fff46c
+- name: github.com/kelseyhightower/envconfig
+  version: f611eb38b3875cc3bd991ca91c51d06446afa14c
 - name: github.com/mattn/go-isatty
   version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
 - name: github.com/microcosm-cc/bluemonday
   version: 995366fdf961d03629cd17361bddd32745718e2c
 - name: github.com/mojocn/base64Captcha
   version: 9479fc95fcf65b459b5608cffcec627db12e3fd3
-- name: github.com/timest/env
-  version: 5fce78d352551610a659700784f25a237fa5f4da
 - name: github.com/ugorji/go
   version: f3cacc17c85ecb7f1b6a9e373ee85d1480919868
   subpackages:

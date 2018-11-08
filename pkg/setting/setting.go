@@ -1,7 +1,8 @@
 package setting
 
 import (
-	"github.com/timest/env"
+	"fmt"
+	"github.com/kelseyhightower/envconfig"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 	RedisDb int
 )
 
-type config struct {
+type Config struct {
 	AppMode		string	`default:"debug"`
 	AppPort		string	`default:"3001"`
 	AppSecret	string	`default:"123456"`
@@ -45,13 +46,14 @@ type config struct {
 }
 
 func init() {
-	cfg := new(config)
-	err := env.Fill(cfg)
+	var cfg Config
+	err := envconfig.Process("config", &cfg)
 	if err != nil {
-		panic(err)
-	}
-	// fmt.Println("AppMode:", cfg.AppMode)
-	// fmt.Println("AppPort:", cfg.AppPort)
+        panic(err)
+    }
+
+	fmt.Println("DbHost:", cfg.DbHost)
+	fmt.Println("DbPwd:", cfg.DbPwd)
 
 	AppMode = cfg.AppMode
 	AppPort = cfg.AppPort
