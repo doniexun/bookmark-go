@@ -29,7 +29,7 @@ func InitRouter() *gin.Engine {
 
 	r.GET("/", v1.Hello)
 
-	apiv1 := r.Group("/api/v1")
+	apiv1 := r.Group("/bookmarkapi/v1")
 	{
 		apiv1.GET("/captcha", v1.GetCaptcha)
 
@@ -51,7 +51,7 @@ func InitRouter() *gin.Engine {
 	}
 
 	// delete
-	apiv1del := r.Group("/api/v1/del")
+	apiv1del := r.Group("/bookmarkapi/v1/del")
 	apiv1del.Use(jwt.JWT())
 	{
 		apiv1del.POST("/bookmarks", v1.DelBookmarks)
